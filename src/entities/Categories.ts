@@ -5,22 +5,16 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Users } from './Users';
+import { CategoryPictures } from './CategoryPictures';
 
-@Index('roles_pkey', ['id'], { unique: true })
-@Entity('roles', { schema: 'public' })
-export class Roles {
+@Index('categories_pkey', ['id'], { unique: true })
+@Entity('categories', { schema: 'public' })
+export class Categories {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
   @Column('character varying', { name: 'name', nullable: true, length: 255 })
   name: string | null;
-
-  @Column('boolean', { name: 'is_active', nullable: true })
-  isActive: boolean | null;
-
-  @Column('boolean', { name: 'is_access_cms', nullable: true })
-  isAccessCms: boolean | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
@@ -40,6 +34,9 @@ export class Roles {
   @Column('bigint', { name: 'deleted_by', nullable: true })
   deletedBy: string | null;
 
-  @OneToMany(() => Users, (users) => users.role)
-  users: Users[];
+  @OneToMany(
+    () => CategoryPictures,
+    (categoryPictures) => categoryPictures.category,
+  )
+  categoryPictures: CategoryPictures[];
 }
