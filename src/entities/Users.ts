@@ -5,9 +5,11 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Roles } from './Roles';
+import { Bookings } from './Bookings';
 
 @Index('users_pkey', ['id'], { unique: true })
 @Entity('users', { schema: 'public' })
@@ -89,4 +91,7 @@ export class Users {
   @ManyToOne(() => Roles, (roles) => roles.users)
   @JoinColumn([{ name: 'role_id', referencedColumnName: 'id' }])
   role: Roles;
+
+  @OneToMany(() => Bookings, (bookings) => bookings.user)
+  bookings: Bookings[];
 }

@@ -2,20 +2,25 @@ import {
   Column,
   Entity,
   Index,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryPictures } from './CategoryPictures';
-import { MovieCategories } from './MovieCategories';
+import { AutoMap } from '@automapper/classes';
+import { Movies } from './Movies';
 
-@Index('categories_pkey', ['id'], { unique: true })
-@Entity('categories', { schema: 'public' })
-export class Categories {
+@Index('reviews_pkey', ['id'], { unique: true })
+@Entity('reviews', { schema: 'public' })
+export class Reviews {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
-  @Column('character varying', { name: 'name', nullable: true, length: 255 })
-  name: string | null;
+  @AutoMap()
+  @Column('text', { name: 'description', nullable: true })
+  description: string | null;
+
+  @Column('integer', { name: 'star', nullable: true, default: 0 })
+  star: number | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
@@ -35,15 +40,7 @@ export class Categories {
   @Column('bigint', { name: 'deleted_by', nullable: true })
   deletedBy: string | null;
 
-  @OneToMany(
-    () => CategoryPictures,
-    (categoryPictures) => categoryPictures.category,
-  )
-  categoryPictures: CategoryPictures[];
-
-  @OneToMany(
-    () => MovieCategories,
-    (movieCategories) => movieCategories.category,
-  )
-  movieCategories: MovieCategories[];
+  @ManyToOne(() => Movies, (movies) => movies.reviews)
+  @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
+  movie: Movies;
 }

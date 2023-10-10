@@ -5,17 +5,26 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryPictures } from './CategoryPictures';
-import { MovieCategories } from './MovieCategories';
+import { AutoMap } from '@automapper/classes';
+import { NewsPictures } from './NewsPictures';
 
-@Index('categories_pkey', ['id'], { unique: true })
-@Entity('categories', { schema: 'public' })
-export class Categories {
+@Index('news_pkey', ['id'], { unique: true })
+@Entity('news', { schema: 'public' })
+export class News {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
-  @Column('character varying', { name: 'name', nullable: true, length: 255 })
-  name: string | null;
+  @AutoMap()
+  @Column('text', { name: 'title', nullable: true })
+  title: string | null;
+
+  @AutoMap()
+  @Column('text', { name: 'short_desc', nullable: true })
+  short_desc: string | null;
+
+  @AutoMap()
+  @Column('text', { name: 'full_desc', nullable: true })
+  full_desc: string | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
@@ -35,15 +44,6 @@ export class Categories {
   @Column('bigint', { name: 'deleted_by', nullable: true })
   deletedBy: string | null;
 
-  @OneToMany(
-    () => CategoryPictures,
-    (categoryPictures) => categoryPictures.category,
-  )
-  categoryPictures: CategoryPictures[];
-
-  @OneToMany(
-    () => MovieCategories,
-    (movieCategories) => movieCategories.category,
-  )
-  movieCategories: MovieCategories[];
+  @OneToMany(() => NewsPictures, (newsPictures) => newsPictures.news)
+  newsPictures: NewsPictures[];
 }

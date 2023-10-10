@@ -2,20 +2,29 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CategoryPictures } from './CategoryPictures';
-import { MovieCategories } from './MovieCategories';
+import { Theaters } from './Theaters';
+import { Seats } from './Seats';
+import { Showings } from './Showings';
 
-@Index('categories_pkey', ['id'], { unique: true })
-@Entity('categories', { schema: 'public' })
-export class Categories {
+@Index('rooms_pkey', ['id'], { unique: true })
+@Entity('rooms', { schema: 'public' })
+export class Rooms {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
   @Column('character varying', { name: 'name', nullable: true, length: 255 })
   name: string | null;
+
+  @Column('integer', { name: 'capacity', nullable: true, default: 0 })
+  capacity: number | null;
+
+  @Column('character varying', { name: 'type', nullable: true, length: 255 })
+  type: string | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
@@ -35,15 +44,13 @@ export class Categories {
   @Column('bigint', { name: 'deleted_by', nullable: true })
   deletedBy: string | null;
 
-  @OneToMany(
-    () => CategoryPictures,
-    (categoryPictures) => categoryPictures.category,
-  )
-  categoryPictures: CategoryPictures[];
+  @ManyToOne(() => Theaters, (theaters) => theaters.rooms)
+  @JoinColumn([{ name: 'theater_id', referencedColumnName: 'id' }])
+  theater: Theaters;
 
-  @OneToMany(
-    () => MovieCategories,
-    (movieCategories) => movieCategories.category,
-  )
-  movieCategories: MovieCategories[];
+  @OneToMany(() => Seats, (seats) => seats.room)
+  seats: Seats[];
+
+  @OneToMany(() => Showings, (showings) => showings.room)
+  showings: Showings[];
 }

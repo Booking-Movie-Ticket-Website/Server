@@ -2,49 +2,39 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { MovieParticipants } from './MovieParticipants';
+import { Rooms } from './Rooms';
+import { ShowingSeats } from './ShowingSeats';
 
-@Index('people_pkey', ['id'], { unique: true })
-@Entity('people', { schema: 'public' })
-export class People {
+@Index('seats_pkey', ['id'], { unique: true })
+@Entity('seats', { schema: 'public' })
+export class Seats {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
 
   @Column('character varying', {
-    name: 'profession',
+    name: 'seat_row',
     nullable: true,
     length: 255,
   })
-  profession: string | null;
+  seatRow: string | null;
 
   @Column('character varying', {
-    name: 'full_name',
+    name: 'seat_column',
     nullable: true,
     length: 255,
   })
-  fullName: string | null;
+  seatColumn: string | null;
 
-  @Column('character varying', { name: 'gender', nullable: true, length: 255 })
-  gender: string | null;
+  @Column('character varying', { name: 'type', nullable: true, length: 255 })
+  type: string | null;
 
-  @Column('text', { name: 'profile_picture', nullable: true })
-  profilePicture: string | null;
-
-  @Column('date', { name: 'date_of_birth', nullable: true })
-  dateOfBirth: string | null;
-
-  @Column('text', { name: 'biography', nullable: true })
-  biography: string | null;
-
-  @Column('character varying', {
-    name: 'nationality',
-    nullable: true,
-    length: 255,
-  })
-  nationality: string | null;
+  @Column('integer', { name: 'pair_with', nullable: true, default: 0 })
+  pairWith: number | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
@@ -64,9 +54,10 @@ export class People {
   @Column('bigint', { name: 'deleted_by', nullable: true })
   deletedBy: string | null;
 
-  @OneToMany(
-    () => MovieParticipants,
-    (movieParticipants) => movieParticipants.people,
-  )
-  movieParticipants: MovieParticipants[];
+  @ManyToOne(() => Rooms, (rooms) => rooms.seats)
+  @JoinColumn([{ name: 'room_id', referencedColumnName: 'id' }])
+  room: Rooms;
+
+  @OneToMany(() => ShowingSeats, (showingSeats) => showingSeats.seat)
+  showingSeats: ShowingSeats[];
 }
