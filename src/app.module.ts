@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { classes } from '@automapper/classes';
       strategyInitializer: classes(),
     }),
     AuthModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],
