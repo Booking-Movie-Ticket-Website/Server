@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { addProfile } from '@automapper/core';
+import { mapper } from './config/mapper';
+import { authProfile } from './auth/auth.profile';
 
 dotenv.config();
 
@@ -10,6 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
 
+  configAutoMapper();
   configSwagger(app);
 
   await app.listen(process.env.APP_PORT || 3001, () => {
@@ -17,6 +21,10 @@ async function bootstrap() {
   });
 }
 bootstrap();
+
+function configAutoMapper() {
+  addProfile(mapper, authProfile);
+}
 
 function configSwagger(app: INestApplication) {
   const config = new DocumentBuilder()

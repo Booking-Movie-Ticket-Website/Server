@@ -92,6 +92,10 @@ export class Users {
   @JoinColumn([{ name: 'role_id', referencedColumnName: 'id' }])
   role: Roles;
 
+  @AutoMap()
+  @Column('bigint', { name: 'role_id', nullable: true })
+  roleId: string | null;
+
   @OneToMany(() => Bookings, (bookings) => bookings.user)
   bookings: Bookings[];
 }

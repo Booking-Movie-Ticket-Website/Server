@@ -40,17 +40,21 @@ export class AuthService {
 
     if (!exitedUser)
       throw new HttpException(
-        'Email or password is incorrect',
+        'Email or password is not correct',
         HttpStatus.BAD_REQUEST,
       );
 
     const { password: hashedPassword } = exitedUser;
     const compareResult = await bcrypt.compare(password, hashedPassword);
+
     if (!compareResult)
       throw new HttpException(
-        'Email or password is incorrect',
+        'Email or password is not correct',
         HttpStatus.BAD_REQUEST,
       );
+
+    const accessToken = await this.getAccesstoken(exitedUser);
+    return accessToken;
   }
 
   async getAccesstoken(user: Users) {
@@ -103,10 +107,7 @@ export class AuthService {
     if (exitedUser)
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      this.configService.get<number>('BCRYPT_SALT'),
-    );
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = await this.usersRepository.save(
       this.usersRepository.create({
