@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Roles } from 'src/entities/Roles';
-import { Role } from 'src/roles/entities/role.entity';
 import * as moment from 'moment';
 import {
   PageMetaDto,

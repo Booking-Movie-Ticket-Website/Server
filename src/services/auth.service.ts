@@ -112,6 +112,7 @@ export class AuthService {
     const newUser = await this.usersRepository.save(
       this.usersRepository.create({
         ...dto,
+        roleId: '2',
         password: hashedPassword,
         createdAt: moment().format(),
       }),

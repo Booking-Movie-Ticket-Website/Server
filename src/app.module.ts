@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { RolesModule } from './roles/roles.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RolesModule } from './roles/roles.module';
     }),
     AuthModule,
     RolesModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],
