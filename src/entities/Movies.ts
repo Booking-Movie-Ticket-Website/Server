@@ -52,12 +52,12 @@ export class Movies {
   totalReviews: number | null;
 
   @Column('double precision', {
-    name: 'avg_stars',
+    name: 'avr_stars',
     nullable: true,
     default: 0,
     precision: 53,
   })
-  avgStars: number | null;
+  avrStars: number | null;
 
   @Column('boolean', { name: 'is_active', nullable: true })
   isActive: boolean | null;

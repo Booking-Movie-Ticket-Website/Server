@@ -8,6 +8,7 @@ import { classes } from '@automapper/classes';
 import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { PeopleModule } from './people/people.module';
+import { MoviesModule } from './movies/movies.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PeopleModule } from './people/people.module';
     RolesModule,
     CategoriesModule,
     PeopleModule,
+    MoviesModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],
