@@ -10,60 +10,64 @@ import {
   Req,
   Query,
 } from '@nestjs/common';
-import { RolesService } from '../services/roles.service';
-import { CreateRoleDto, RoleFilter, UpdateRoleDto } from './dto/roles.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { PeopleService } from 'src/services/people.service';
+import {
+  CreatePersonDto,
+  PeopleFilter,
+  UpdatePersonDto,
+} from './dto/people.dto';
 
-@ApiTags('roles')
-@Controller('roles')
+@ApiTags('people')
+@Controller('people')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
-export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+export class PeopleController {
+  constructor(private readonly peopleService: PeopleService) {}
 
   @Post()
-  async create(@Req() req, @Body() dto: CreateRoleDto) {
+  async create(@Req() req, @Body() dto: CreatePersonDto) {
     const { id: createdBy } = req.user;
-    const newRole = await this.rolesService.create(dto, createdBy);
+    const newPerson = await this.peopleService.create(dto, createdBy);
     return {
       message: 'create successfully',
-      newRole,
+      newPerson,
     };
   }
 
   @Get()
-  async findAll(@Query() input: RoleFilter) {
-    return await this.rolesService.findAll(input);
+  async findAll(@Query() input: PeopleFilter) {
+    return await this.peopleService.findAll(input);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.rolesService.findOne(id);
+    return await this.peopleService.findOne(id);
   }
 
   @Patch(':id')
   async update(
     @Req() req,
     @Param('id') id: string,
-    @Body() dto: UpdateRoleDto,
+    @Body() dto: UpdatePersonDto,
   ) {
     const { id: updatedBy } = req.user;
-    const updatedRole = await this.rolesService.update(id, dto, updatedBy);
+    const updatedPerson = await this.peopleService.update(id, dto, updatedBy);
 
     return {
       message: 'update successfully',
-      updatedRole,
+      updatedPerson,
     };
   }
 
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;
-    const deletedRole = await this.rolesService.remove(id, deletedBy);
+    const deletedPerson = await this.peopleService.remove(id, deletedBy);
     return {
       message: 'delete successfully',
-      deletedRole,
+      deletedPerson,
     };
   }
 }

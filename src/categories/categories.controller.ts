@@ -29,10 +29,10 @@ export class CategoriesController {
   @Post()
   async create(@Req() req, @Body() dto: CreateCategoryDto) {
     const { id: createdBy } = req.user;
-    const newRole = await this.categoriesService.create(dto, createdBy);
+    const newCategory = await this.categoriesService.create(dto, createdBy);
     return {
-      message: 'new category created successfully',
-      newRole,
+      message: 'create successfully',
+      newCategory,
     };
   }
 
@@ -53,21 +53,25 @@ export class CategoriesController {
     @Body() dto: UpdateCategoryDto,
   ) {
     const { id: updatedBy } = req.user;
-    const updatedRole = await this.categoriesService.update(id, dto, updatedBy);
+    const updatedCategory = await this.categoriesService.update(
+      id,
+      dto,
+      updatedBy,
+    );
 
     return {
-      message: 'category updated successfully',
-      updatedRole,
+      message: 'update successfully',
+      updatedCategory,
     };
   }
 
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;
-    const deletedRole = await this.categoriesService.remove(id, deletedBy);
+    const deletedCategory = await this.categoriesService.remove(id, deletedBy);
     return {
-      message: 'category deleted successfully',
-      deletedRole,
+      message: 'delete successfully',
+      deletedCategory,
     };
   }
 }

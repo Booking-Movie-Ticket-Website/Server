@@ -7,6 +7,7 @@ import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
+import { PeopleModule } from './people/people.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CategoriesModule } from './categories/categories.module';
     AuthModule,
     RolesModule,
     CategoriesModule,
+    PeopleModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],
