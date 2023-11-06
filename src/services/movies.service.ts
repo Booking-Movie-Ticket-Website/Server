@@ -136,7 +136,12 @@ export class MoviesService {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['movieParticipants'],
+      relations: [
+        'moviePosters',
+        'movieCategories',
+        'movieParticipants',
+        'reviews',
+      ],
     });
     if (!movie)
       throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
