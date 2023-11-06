@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { News } from './News';
 
-@Index('News_pictures_pkey', ['id'], { unique: true })
-@Entity('News_pictures', { schema: 'public' })
+@Index('news_pictures_pkey', ['id'], { unique: true })
+@Entity('news_pictures', { schema: 'public' })
 export class NewsPictures {
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'id' })
   id: string;
@@ -20,4 +20,7 @@ export class NewsPictures {
   @ManyToOne(() => News, (news) => news.newsPictures)
   @JoinColumn([{ name: 'news_id', referencedColumnName: 'id' }])
   news: News;
+
+  @Column('bigint', { name: 'news_id', nullable: true })
+  newsId: string | null;
 }

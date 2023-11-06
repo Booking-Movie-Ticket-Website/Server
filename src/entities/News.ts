@@ -20,11 +20,11 @@ export class News {
 
   @AutoMap()
   @Column('text', { name: 'short_desc', nullable: true })
-  short_desc: string | null;
+  shortDesc: string | null;
 
   @AutoMap()
   @Column('text', { name: 'full_desc', nullable: true })
-  full_desc: string | null;
+  fullDesc: string | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
