@@ -25,10 +25,10 @@ export class MoviesController {
   @Post()
   async create(@Req() req, @Body() dto: CreateMovieDto) {
     const { id: createdBy } = req.user;
-    const newPerson = await this.moviesService.create(dto, createdBy);
+    const newMovie = await this.moviesService.create(dto, createdBy);
     return {
       message: 'create successfully',
-      newPerson,
+      newMovie,
     };
   }
 
@@ -49,21 +49,21 @@ export class MoviesController {
     @Body() dto: UpdateMovieDto,
   ) {
     const { id: updatedBy } = req.user;
-    const updatedPerson = await this.moviesService.update(id, dto, updatedBy);
+    const updatedMovie = await this.moviesService.update(id, dto, updatedBy);
 
     return {
       message: 'update successfully',
-      updatedPerson,
+      updatedMovie,
     };
   }
 
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;
-    const deletedPerson = await this.moviesService.remove(id, deletedBy);
+    const deletedMovie = await this.moviesService.remove(id, deletedBy);
     return {
       message: 'delete successfully',
-      deletedPerson,
+      deletedMovie,
     };
   }
 }

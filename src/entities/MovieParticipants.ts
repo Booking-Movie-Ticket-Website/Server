@@ -20,7 +20,16 @@ export class MovieParticipants {
   @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
   movie: Movies;
 
+  @Column('bigint', { name: 'movie_id', nullable: true })
+  movieId: string | null;
+
   @ManyToOne(() => People, (people) => people.movieParticipants)
   @JoinColumn([{ name: 'people_id', referencedColumnName: 'id' }])
   people: People;
+
+  @Column('bigint', { name: 'people_id', nullable: true })
+  peopleId: string | null;
+
+  @Column('bigint', { name: 'profession', nullable: true })
+  profession: string | null;
 }
