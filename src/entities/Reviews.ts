@@ -43,4 +43,7 @@ export class Reviews {
   @ManyToOne(() => Movies, (movies) => movies.reviews)
   @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
   movie: Movies;
+
+  @Column('bigint', { name: 'movie_id', nullable: true })
+  movieId: string | null;
 }
