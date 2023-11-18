@@ -12,6 +12,7 @@ import { MoviesModule } from './movies/movies.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NewsModule } from './news/news.module';
 import { TheatersModule } from './theaters/theaters.module';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TheatersModule } from './theaters/theaters.module';
     ReviewsModule,
     NewsModule,
     TheatersModule,
+    RoomsModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],

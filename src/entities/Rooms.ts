@@ -48,6 +48,9 @@ export class Rooms {
   @JoinColumn([{ name: 'theater_id', referencedColumnName: 'id' }])
   theater: Theaters;
 
+  @Column('bigint', { name: 'theater_id', nullable: true })
+  theaterId: string | null;
+
   @OneToMany(() => Seats, (seats) => seats.room)
   seats: Seats[];
 
