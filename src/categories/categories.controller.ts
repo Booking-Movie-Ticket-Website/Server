@@ -21,11 +21,11 @@ import {
 
 @ApiTags('categories')
 @Controller('categories')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreateCategoryDto) {
     const { id: createdBy } = req.user;
@@ -46,6 +46,8 @@ export class CategoriesController {
     return await this.categoriesService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -65,6 +67,8 @@ export class CategoriesController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;
