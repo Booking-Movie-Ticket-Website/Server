@@ -62,6 +62,13 @@ export class Movies {
   @Column('boolean', { name: 'is_active', nullable: true })
   isActive: boolean | null;
 
+  @Column('character varying', {
+    name: 'director',
+    nullable: true,
+    length: 255,
+  })
+  director: string | null;
+
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })
   createdAt: Date | null;
 

@@ -108,9 +108,7 @@ export class MoviesService {
       .createQueryBuilder('m')
       .leftJoinAndSelect('m.moviePosters', 'moviePosters')
       .leftJoinAndSelect('m.movieCategories', 'movieCategories')
-      .leftJoinAndSelect('m.movieParticipants', 'movieParticipants')
       .leftJoinAndSelect('movieCategories.category', 'category')
-      .leftJoinAndSelect('movieParticipants.people', 'people')
       .where(
         `
         m.deletedAt is null
