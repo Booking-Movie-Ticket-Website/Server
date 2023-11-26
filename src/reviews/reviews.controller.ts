@@ -26,6 +26,8 @@ import {
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreateReviewDto) {
     const { id: createdBy } = req.user;
@@ -46,6 +48,8 @@ export class ReviewsController {
     return await this.reviewsService.findAllByMovie(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -61,6 +65,8 @@ export class ReviewsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;

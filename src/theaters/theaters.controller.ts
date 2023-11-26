@@ -22,11 +22,11 @@ import {
 
 @ApiTags('theaters')
 @Controller('theaters')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class TheatersController {
   constructor(private readonly theatersService: TheatersService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreateTheaterDto) {
     const { id: createdBy } = req.user;
@@ -47,6 +47,8 @@ export class TheatersController {
     return await this.theatersService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -62,6 +64,8 @@ export class TheatersController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;

@@ -18,11 +18,11 @@ import { RoomsService } from 'src/services/rooms.service';
 
 @ApiTags('rooms')
 @Controller('rooms')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreateRoomDto) {
     const { id: createdBy } = req.user;
@@ -43,6 +43,8 @@ export class RoomsController {
     return await this.roomsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -58,6 +60,8 @@ export class RoomsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;

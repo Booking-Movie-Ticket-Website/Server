@@ -17,11 +17,11 @@ import { CreateNewsDto, NewsFilter, UpdateNewsDto } from './dto/news.dto';
 
 @ApiTags('news')
 @Controller('news')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreateNewsDto) {
     const { id: createdBy } = req.user;
@@ -42,6 +42,8 @@ export class NewsController {
     return await this.newsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -57,6 +59,8 @@ export class NewsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;

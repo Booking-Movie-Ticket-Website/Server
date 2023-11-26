@@ -21,11 +21,11 @@ import {
 
 @ApiTags('people')
 @Controller('people')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class PeopleController {
   constructor(private readonly peopleService: PeopleService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Req() req, @Body() dto: CreatePersonDto) {
     const { id: createdBy } = req.user;
@@ -46,6 +46,8 @@ export class PeopleController {
     return await this.peopleService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Req() req,
@@ -61,6 +63,8 @@ export class PeopleController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const { id: deletedBy } = req.user;
