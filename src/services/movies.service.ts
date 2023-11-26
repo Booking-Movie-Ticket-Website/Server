@@ -144,18 +144,6 @@ export class MoviesService {
       })
       .getOne();
 
-    // findOne({
-    //   where: {
-    //     id,
-    //     deletedAt: IsNull(),
-    //   },
-    //   relations: [
-    //     'moviePosters',
-    //     'movieCategories',
-    //     'movieParticipants',
-    //     'reviews',
-    //   ],
-    // });
     if (!movie)
       throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
 
