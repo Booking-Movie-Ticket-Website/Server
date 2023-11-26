@@ -12,6 +12,7 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.enableCors(configureCors(app));
 
   configAutoMapper();
   configSwagger(app);
@@ -39,4 +40,11 @@ function configSwagger(app: INestApplication) {
       persistAuthorization: true,
     },
   });
+}
+
+function configureCors(app: INestApplication) {
+  return {
+    allowedHeaders: '*',
+    origin: '*',
+  };
 }
