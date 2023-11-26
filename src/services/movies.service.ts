@@ -131,18 +131,31 @@ export class MoviesService {
   }
 
   async findOne(id: string) {
-    const movie = await this.moviesRepository.findOne({
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-      relations: [
-        'moviePosters',
-        'movieCategories',
-        'movieParticipants',
-        'reviews',
-      ],
-    });
+    const movie = await this.moviesRepository
+      .createQueryBuilder('m')
+      .leftJoinAndSelect('m.moviePosters', 'moviePosters')
+      .leftJoinAndSelect('m.movieCategories', 'movieCategories')
+      .leftJoinAndSelect('m.movieParticipants', 'movieParticipants')
+      .leftJoinAndSelect('m.reviews', 'reviews')
+      .leftJoinAndSelect('movieCategories.category', 'category')
+      .leftJoinAndSelect('movieParticipants.people', 'people')
+      .where('m.deletedAt is null and m.id = :movieId', {
+        movieId: id,
+      })
+      .getOne();
+
+    // findOne({
+    //   where: {
+    //     id,
+    //     deletedAt: IsNull(),
+    //   },
+    //   relations: [
+    //     'moviePosters',
+    //     'movieCategories',
+    //     'movieParticipants',
+    //     'reviews',
+    //   ],
+    // });
     if (!movie)
       throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
 
