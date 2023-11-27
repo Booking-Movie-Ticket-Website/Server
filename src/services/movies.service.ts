@@ -81,7 +81,7 @@ export class MoviesService {
   }
 
   async findAll(input: MovieFilter) {
-    const { page, take, name, nation, filterMovies } = input;
+    const { page, take, name, nation, categoryId, filterMovies } = input;
 
     let filter = undefined;
     let order = undefined;
@@ -108,17 +108,24 @@ export class MoviesService {
       .createQueryBuilder('m')
       .leftJoinAndSelect('m.moviePosters', 'moviePosters')
       .leftJoinAndSelect('m.movieCategories', 'movieCategories')
+      .leftJoin('m.filterMovieCategories', 'filterMovieCategories')
       .leftJoinAndSelect('movieCategories.category', 'category')
       .where(
         `
         m.deletedAt is null
         ${name ? ' and LOWER(m.name) like :name' : ''}
         ${nation ? ' and LOWER(m.nation) like :nation' : ''}
+        ${
+          categoryId
+            ? ' and filterMovieCategories.categoryId = :categoryId'
+            : ''
+        }
         ${filter ?? ''}
         `,
         {
           ...(name ? { name: `%${name.toLowerCase()}%` } : {}),
           ...(nation ? { nation: `%${nation.toLowerCase()}%` } : {}),
+          ...(categoryId ? { categoryId } : {}),
         },
       )
       .orderBy(order?.content ?? 'm.id', order?.arrange ?? 'DESC')

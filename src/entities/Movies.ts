@@ -93,6 +93,9 @@ export class Movies {
   @OneToMany(() => MovieCategories, (movieCategories) => movieCategories.movie)
   movieCategories: MovieCategories[];
 
+  @OneToMany(() => MovieCategories, (movieCategories) => movieCategories.movie)
+  filterMovieCategories: MovieCategories[];
+
   @OneToMany(
     () => MovieParticipants,
     (movieParticipants) => movieParticipants.movie,

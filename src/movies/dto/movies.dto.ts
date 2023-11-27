@@ -10,6 +10,9 @@ export class MovieFilter extends OmitType(PageOptionsDto, ['order'] as const) {
   @ApiProperty({ required: false })
   nation: string | null;
 
+  @ApiProperty({ required: false })
+  categoryId: string | null;
+
   @ApiProperty({
     required: false,
     enum: FilterMoviesEnum,
