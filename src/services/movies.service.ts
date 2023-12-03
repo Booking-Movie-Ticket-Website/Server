@@ -112,7 +112,7 @@ export class MoviesService {
       .leftJoinAndSelect('movieCategories.category', 'category')
       .where(
         `
-        m.deletedAt is null
+        m.deletedAt is null and moviePosters.isThumb = true
         ${name ? ' and LOWER(m.name) like :name' : ''}
         ${nation ? ' and LOWER(m.nation) like :nation' : ''}
         ${

@@ -20,4 +20,7 @@ export class MoviePosters {
   @ManyToOne(() => Movies, (movies) => movies.moviePosters)
   @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
   movie: Movies;
+
+  @Column('boolean', { name: 'is_thumb', nullable: true, default: false })
+  isThumb: boolean | null;
 }

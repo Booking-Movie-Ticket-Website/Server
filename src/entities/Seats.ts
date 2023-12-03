@@ -28,7 +28,7 @@ export class Seats {
     nullable: true,
     length: 255,
   })
-  seatColumn: string | null;
+  seatColumn: number | null;
 
   @Column('character varying', { name: 'type', nullable: true, length: 255 })
   type: string | null;
@@ -57,6 +57,9 @@ export class Seats {
   @ManyToOne(() => Rooms, (rooms) => rooms.seats)
   @JoinColumn([{ name: 'room_id', referencedColumnName: 'id' }])
   room: Rooms;
+
+  @Column('bigint', { name: 'room_id', nullable: true })
+  roomId: string | null;
 
   @OneToMany(() => ShowingSeats, (showingSeats) => showingSeats.seat)
   showingSeats: ShowingSeats[];

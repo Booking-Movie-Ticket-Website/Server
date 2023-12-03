@@ -25,7 +25,7 @@ export class RoomsService {
   ) {}
   async create(dto: CreateRoomDto, createdBy: string) {
     const { theaterId, name, capacity, type } = dto;
-    if (!theaterId || !name || !capacity || !type)
+    if (!theaterId || !name || !type)
       throw new HttpException('invalid input', HttpStatus.BAD_REQUEST);
 
     const existedTheater = await this.theatersRepository.findOne({

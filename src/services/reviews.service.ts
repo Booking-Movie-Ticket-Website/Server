@@ -37,7 +37,7 @@ export class ReviewsService {
 
     if (!star) throw new HttpException('invalid input', HttpStatus.BAD_REQUEST);
 
-    return await this.reviewsRepository.save(
+    const newReview = await this.reviewsRepository.save(
       this.reviewsRepository.create({
         ...dto,
         movieId,
@@ -45,6 +45,8 @@ export class ReviewsService {
         createdBy,
       }),
     );
+
+    await this.reCalculateAverageStars(existedMovie, newReview, createdBy);
   }
 
   async findAll(input: ReviewFilter) {
@@ -111,10 +113,49 @@ export class ReviewsService {
     if (!existedReview)
       throw new HttpException('review not found', HttpStatus.BAD_REQUEST);
 
-    return await this.reviewsRepository.save({
+    const deletedReview = await this.reviewsRepository.save({
       ...existedReview,
       deletedAt: moment().format(),
       deletedBy,
+    });
+
+    const existedMovie = await this.moviesRepository.findOne({
+      where: {
+        id: existedReview?.movieId,
+        deletedAt: IsNull(),
+      },
+    });
+    if (!existedMovie)
+      throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
+
+    await this.reCalculateAverageStars(existedMovie, existedReview, deletedBy);
+
+    return deletedReview;
+  }
+
+  async reCalculateAverageStars(
+    movie: Movies,
+    review: Reviews,
+    updatedBy: string,
+  ) {
+    const { totalReviews, avrStars } = movie;
+    const { star, deletedAt } = review;
+
+    const starAmount = deletedAt ? -star : +star;
+    const updateTotalAmount = deletedAt ? -1 : +1;
+
+    const totalStars = +totalReviews * +avrStars;
+    const newTotalStars = totalStars + starAmount;
+
+    const newTotalReviews = totalReviews + updateTotalAmount;
+    const newAvrStars = newTotalStars / newTotalReviews;
+
+    await this.moviesRepository.save({
+      ...movie,
+      totalReviews: newTotalReviews,
+      avrStars: newAvrStars,
+      updatedAt: moment().format(),
+      updatedBy,
     });
   }
 }
