@@ -5,6 +5,13 @@ import { SeatsEnum } from 'src/shared/seats.enum';
 export class SeatFilter extends OmitType(PageOptionsDto, ['order'] as const) {
   @ApiProperty({ required: false })
   roomId: string | null;
+
+  @ApiProperty({
+    required: false,
+    enum: SeatsEnum,
+    default: SeatsEnum.STANDARD,
+  })
+  seatType: SeatsEnum | null;
 }
 
 export class CreateSeatDto {
@@ -25,4 +32,7 @@ export class CreateSeatDto {
   seatType: SeatsEnum | null;
 }
 
-export class UpdateSeatDto extends PartialType(CreateSeatDto) {}
+export class UpdateSeatDto extends PartialType(CreateSeatDto) {
+  @ApiProperty({ required: false })
+  pairWith: string | null;
+}

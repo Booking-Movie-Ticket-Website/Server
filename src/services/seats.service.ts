@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import * as moment from 'moment';
 import {
   PageMetaDto,
@@ -64,17 +64,19 @@ export class SeatsService {
   }
 
   async findAllOfARoom(input: SeatFilter) {
-    const { page, take, roomId } = input;
+    const { page, take, roomId, seatType } = input;
 
-    const [seats, count] = await this.roomsRepository
+    const [seats, count] = await this.seatsRepository
       .createQueryBuilder('s')
       .where(
         `
-      r.deletedAt is null
+      s.deletedAt is null
       ${roomId ? ' and s.roomId = :roomId' : ''}
+      ${seatType ? ' and s.type = :seatType' : ''}
       `,
         {
           ...(roomId ? { roomId } : {}),
+          ...(seatType ? { seatType } : {}),
         },
       )
       .orderBy('s.id', 'DESC')
@@ -100,6 +102,7 @@ export class SeatsService {
   }
 
   async update(id: string, dto: UpdateSeatDto, updatedBy: string) {
+    const { seatType, pairWith } = dto;
     const existedSeat = await this.seatsRepository.findOne({
       where: {
         id,
@@ -109,12 +112,69 @@ export class SeatsService {
     if (!existedSeat)
       throw new HttpException('seat not found', HttpStatus.BAD_REQUEST);
 
-    return await this.seatsRepository.save({
-      ...existedSeat,
-      ...dto,
-      updatedAt: moment().format(),
-      updatedBy,
-    });
+    if (seatType === SeatsEnum.COUPLE && !pairWith) {
+      throw new HttpException(
+        'couple seat must have pair seat',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (seatType === SeatsEnum.COUPLE && pairWith) {
+      const existedPairSeat = await this.seatsRepository.findOne({
+        where: {
+          id: pairWith,
+          pairWith: IsNull() || +id,
+          deletedAt: IsNull(),
+        },
+      });
+      if (!existedPairSeat)
+        throw new HttpException('pair seat not found', HttpStatus.BAD_REQUEST);
+
+      await this.seatsRepository.save({
+        ...existedPairSeat,
+        type: seatType,
+        pairWith: +id,
+        updatedAt: moment().format(),
+        updatedBy,
+      });
+
+      return await this.seatsRepository.save({
+        ...existedSeat,
+        type: seatType,
+        pairWith: +pairWith,
+        updatedAt: moment().format(),
+        updatedBy,
+      });
+    }
+
+    if (seatType === SeatsEnum.STANDARD) {
+      const existedDeletePairSeat = await this.seatsRepository.findOne({
+        where: {
+          pairWith: +id,
+          deletedAt: IsNull(),
+        },
+      });
+
+      if (existedDeletePairSeat) {
+        await this.seatsRepository.save({
+          ...existedDeletePairSeat,
+          type: seatType,
+          pairWith: null,
+          updatedAt: moment().format(),
+          updatedBy,
+        });
+      }
+
+      return await this.seatsRepository.save({
+        ...existedSeat,
+        type: seatType,
+        pairWith: null,
+        updatedAt: moment().format(),
+        updatedBy,
+      });
+    }
+
+    return {};
   }
 
   async remove(id: string, deletedBy: string) {
