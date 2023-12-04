@@ -4,10 +4,12 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AutoMap } from '@automapper/classes';
 import { Movies } from './Movies';
+import { Users } from './Users';
 
 @Index('reviews_pkey', ['id'], { unique: true })
 @Entity('reviews', { schema: 'public' })
@@ -27,6 +29,11 @@ export class Reviews {
 
   @Column('bigint', { name: 'created_by', nullable: true })
   createdBy: string | null;
+
+  @AutoMap()
+  @OneToOne(() => Users)
+  @JoinColumn({ name: 'created_by' })
+  createdUser: Users | null;
 
   @Column('timestamp without time zone', { name: 'updated_at', nullable: true })
   updatedAt: Date | null;

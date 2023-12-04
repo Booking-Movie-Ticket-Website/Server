@@ -47,6 +47,8 @@ export class ReviewsService {
     );
 
     await this.reCalculateAverageStars(existedMovie, newReview, createdBy);
+
+    return newReview;
   }
 
   async findAll(input: ReviewFilter) {
@@ -54,6 +56,7 @@ export class ReviewsService {
 
     const [reviews, count] = await this.reviewsRepository
       .createQueryBuilder('r')
+      .leftJoinAndSelect('r.createdUser', 'createdUser')
       .where(`r.deletedAt is null`)
       .orderBy('r.id', 'DESC')
       .take(take)
