@@ -23,7 +23,7 @@ export class News {
   shortDesc: string | null;
 
   @AutoMap()
-  @Column('text', { name: 'full_desc', nullable: true })
+  @Column('text', { name: 'full_desc', nullable: true, select: false })
   fullDesc: string | null;
 
   @Column('timestamp without time zone', { name: 'created_at', nullable: true })

@@ -63,6 +63,7 @@ export class NewsService {
 
     const [news, count] = await this.newsRepository
       .createQueryBuilder('n')
+      .leftJoinAndSelect('n.newsPictures', 'newsPictures')
       .where(`n.deletedAt is null`)
       .orderBy('n.id', 'DESC')
       .take(take)
@@ -82,6 +83,7 @@ export class NewsService {
         id,
         deletedAt: IsNull(),
       },
+      select: ['id', 'title', 'shortDesc', 'fullDesc', 'createdAt'],
       relations: ['newsPictures'],
     });
   }

@@ -40,6 +40,7 @@ export class AuthService {
         email,
         deletedAt: IsNull(),
       },
+      select: ['id', 'email', 'password'],
     });
 
     if (!exitedUser)
