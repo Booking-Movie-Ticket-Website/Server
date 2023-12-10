@@ -43,7 +43,4 @@ export class Theaters {
 
   @OneToMany(() => Rooms, (rooms) => rooms.theater)
   rooms: Rooms[];
-
-  @OneToMany(() => Showings, (showings) => showings.theater)
-  showings: Showings[];
 }

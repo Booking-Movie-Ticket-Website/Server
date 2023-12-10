@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { Rooms } from './Rooms';
 import { Movies } from './Movies';
-import { Theaters } from './Theaters';
 import { ShowingSeats } from './ShowingSeats';
 
 @Index('showings_pkey', ['id'], { unique: true })
@@ -46,13 +45,15 @@ export class Showings {
   @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
   movie: Movies;
 
-  @ManyToOne(() => Theaters, (theaters) => theaters.showings)
-  @JoinColumn([{ name: 'theater_id', referencedColumnName: 'id' }])
-  theater: Theaters;
+  @Column('bigint', { name: 'movie_id', nullable: true })
+  movieId: string | null;
 
   @ManyToOne(() => Rooms, (rooms) => rooms.showings)
   @JoinColumn([{ name: 'room_id', referencedColumnName: 'id' }])
   room: Rooms;
+
+  @Column('bigint', { name: 'room_id', nullable: true })
+  roomId: string | null;
 
   @OneToMany(() => ShowingSeats, (showingSeats) => showingSeats.showing)
   showingSeats: ShowingSeats[];

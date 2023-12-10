@@ -14,6 +14,7 @@ import { NewsModule } from './news/news.module';
 import { TheatersModule } from './theaters/theaters.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { SeatsModule } from './seats/seats.module';
+import { ShowingsModule } from './showings/showings.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SeatsModule } from './seats/seats.module';
     TheatersModule,
     RoomsModule,
     SeatsModule,
+    ShowingsModule,
   ],
   controllers: [],
   providers: [PostgresDbConfig],

@@ -23,9 +23,6 @@ export class ShowingSeats {
   @Column('character varying', { name: 'type', nullable: true, length: 255 })
   type: string | null;
 
-  @Column('boolean', { name: 'is_booked', nullable: true, default: false })
-  isBooked: boolean | null;
-
   @Column('double precision', {
     name: 'price',
     nullable: true,
@@ -38,7 +35,13 @@ export class ShowingSeats {
   @JoinColumn([{ name: 'showing_id', referencedColumnName: 'id' }])
   showing: Showings;
 
+  @Column('bigint', { name: 'showing_id', nullable: true })
+  showingId: string | null;
+
   @ManyToOne(() => Seats, (seats) => seats.showingSeats)
   @JoinColumn([{ name: 'seat_id', referencedColumnName: 'id' }])
   seat: Seats;
+
+  @Column('bigint', { name: 'seat_id', nullable: true })
+  seatId: string | null;
 }

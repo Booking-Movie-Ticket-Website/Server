@@ -7,13 +7,6 @@ import {
   PaginationDto,
   getSkip,
 } from 'src/shared/pagination/pagination.dto';
-import { Reviews } from 'src/entities/Reviews';
-import {
-  CreateReviewDto,
-  ReviewFilter,
-  UpdateReviewDto,
-} from 'src/reviews/dto/reviews.dto';
-import { Movies } from 'src/entities/Movies';
 import { News } from 'src/entities/News';
 import {
   CreateNewsDto,
