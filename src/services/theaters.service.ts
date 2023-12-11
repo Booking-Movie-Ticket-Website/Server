@@ -24,6 +24,7 @@ import { NewsPictures } from 'src/entities/NewsPictures';
 import { Theaters } from 'src/entities/Theaters';
 import {
   CreateTheaterDto,
+  TheaterFilter,
   UpdateTheaterDto,
 } from 'src/theaters/dto/theaters.dto';
 
@@ -47,12 +48,37 @@ export class TheatersService {
     );
   }
 
-  async findAll(input: NewsFilter) {
-    const { page, take } = input;
+  async findAll(input: TheaterFilter) {
+    const { page, take, movieId, showingDate } = input;
 
     const [theaters, count] = await this.theatersRepository
       .createQueryBuilder('t')
-      .where(`t.deletedAt is null`)
+      .leftJoinAndSelect('t.rooms', 'rooms', 'rooms.deletedAt is null')
+      .leftJoinAndSelect(
+        'rooms.showings',
+        'showings',
+        'showings.deletedAt is null',
+      )
+      .where(
+        `
+          t.deletedAt is null
+          ${movieId ? ' and showings.movieId = :movieId' : ''}
+          ${
+            showingDate
+              ? ' and showings.startTime between :startShowingDate and  :endShowingDate'
+              : ''
+          }
+        `,
+        {
+          ...(movieId ? { movieId } : {}),
+          ...(showingDate
+            ? { startShowingDate: new Date(`${showingDate}T00:00:00Z`) }
+            : {}),
+          ...(showingDate
+            ? { endShowingDate: new Date(`${showingDate}T23:59:59Z`) }
+            : {}),
+        },
+      )
       .orderBy('t.id', 'DESC')
       .take(take)
       .skip(getSkip({ page, take }))

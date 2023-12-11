@@ -3,7 +3,13 @@ import { PageOptionsDto } from 'src/shared/pagination/pagination.dto';
 
 export class TheaterFilter extends OmitType(PageOptionsDto, [
   'order',
-] as const) {}
+] as const) {
+  @ApiProperty({ required: false })
+  movieId: string | null;
+
+  @ApiProperty({ required: false, format: 'YYYY-MM-DD' })
+  showingDate: Date | null;
+}
 
 export class CreateTheaterDto {
   @ApiProperty({ required: false })
