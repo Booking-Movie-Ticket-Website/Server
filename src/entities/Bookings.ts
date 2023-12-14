@@ -7,12 +7,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Rooms } from './Rooms';
-import { Movies } from './Movies';
-import { Theaters } from './Theaters';
 import { ShowingSeats } from './ShowingSeats';
 import { Users } from './Users';
-import { BookingSeats } from './BookingSeats';
+import { Showings } from './Showings';
 
 @Index('bookings_pkey', ['id'], { unique: true })
 @Entity('bookings', { schema: 'public' })
@@ -53,6 +50,16 @@ export class Bookings {
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   user: Users;
 
-  @OneToMany(() => BookingSeats, (bookingSeats) => bookingSeats.booking)
-  bookingSeats: BookingSeats[];
+  @Column('bigint', { name: 'user_id', nullable: true })
+  userId: string | null;
+
+  @ManyToOne(() => Showings, (showings) => showings.bookings)
+  @JoinColumn([{ name: 'showing_id', referencedColumnName: 'id' }])
+  showing: Showings;
+
+  @Column('bigint', { name: 'showing_id', nullable: true })
+  showingId: string | null;
+
+  @OneToMany(() => ShowingSeats, (showingSeats) => showingSeats.booking)
+  showingSeats: ShowingSeats[];
 }

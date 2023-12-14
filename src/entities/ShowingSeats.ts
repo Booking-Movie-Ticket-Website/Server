@@ -8,11 +8,9 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Rooms } from './Rooms';
-import { Movies } from './Movies';
-import { Theaters } from './Theaters';
 import { Showings } from './Showings';
 import { Seats } from './Seats';
+import { Bookings } from './Bookings';
 
 @Index('showing_seats_pkey', ['id'], { unique: true })
 @Entity('showing_seats', { schema: 'public' })
@@ -44,4 +42,11 @@ export class ShowingSeats {
 
   @Column('bigint', { name: 'seat_id', nullable: true })
   seatId: string | null;
+
+  @ManyToOne(() => Bookings, (bookings) => bookings.showingSeats)
+  @JoinColumn([{ name: 'booking_id', referencedColumnName: 'id' }])
+  booking: Bookings;
+
+  @Column('bigint', { name: 'booking_id', nullable: true })
+  bookingId: string | null;
 }

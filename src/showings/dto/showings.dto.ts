@@ -10,6 +10,9 @@ export class ShowingFilter extends OmitType(PageOptionsDto, [
 
   @ApiProperty({ required: false })
   theaterId: string | null;
+
+  @ApiProperty({ required: false, default: true })
+  isAvailable: boolean | null;
 }
 
 export class CreateShowingDto {

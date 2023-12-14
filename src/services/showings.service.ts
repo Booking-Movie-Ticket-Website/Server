@@ -64,17 +64,25 @@ export class ShowingsService {
   }
 
   async findAllShowingOfAMovie(input: ShowingFilter) {
-    const { page, take, movieId, theaterId } = input;
+    const { page, take, isAvailable, movieId, theaterId } = input;
     const [showings, count] = await this.showingsRepository
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.room', 'room')
       .where(
         `
         s.deletedAt is null
+        ${
+          isAvailable.toString() === 'true'
+            ? ' and s.startTime > :currentTime'
+            : ''
+        }
         ${movieId ? ' and s.movieId = :movieId' : ''}
         ${theaterId ? ' and room.theaterId = :theaterId' : ''}
       `,
         {
+          ...(isAvailable.toString() === 'true'
+            ? { currentTime: new Date() }
+            : {}),
           ...(movieId ? { movieId } : {}),
           ...(theaterId ? { theaterId } : {}),
         },

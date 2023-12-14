@@ -10,6 +10,7 @@ import {
 import { Rooms } from './Rooms';
 import { Movies } from './Movies';
 import { ShowingSeats } from './ShowingSeats';
+import { Bookings } from './Bookings';
 
 @Index('showings_pkey', ['id'], { unique: true })
 @Entity('showings', { schema: 'public' })
@@ -54,6 +55,9 @@ export class Showings {
 
   @Column('bigint', { name: 'room_id', nullable: true })
   roomId: string | null;
+
+  @OneToMany(() => Bookings, (bookings) => bookings.showing)
+  bookings: Bookings[];
 
   @OneToMany(() => ShowingSeats, (showingSeats) => showingSeats.showing)
   showingSeats: ShowingSeats[];
