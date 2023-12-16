@@ -87,7 +87,15 @@ export class MoviesService {
   }
 
   async findAll(input: MovieFilter) {
-    const { page, take, name, nation, categoryId, filterMovies } = input;
+    const {
+      page,
+      take,
+      name,
+      nation,
+      categoryId,
+      filterMovies,
+      isNoPagination,
+    } = input;
 
     let filter = undefined;
     let order = undefined;
@@ -110,15 +118,28 @@ export class MoviesService {
         break;
     }
 
-    const [movies, count] = await this.moviesRepository
-      .createQueryBuilder('m')
-      .leftJoinAndSelect('m.moviePosters', 'moviePosters')
-      .leftJoinAndSelect('m.movieCategories', 'movieCategories')
-      .leftJoin('m.filterMovieCategories', 'filterMovieCategories')
-      .leftJoinAndSelect('movieCategories.category', 'category')
-      .where(
-        `
-        m.deletedAt is null and moviePosters.isThumb = true
+    let builder = this.moviesRepository.createQueryBuilder('m');
+
+    if (isNoPagination?.toString() === 'true') {
+      return await builder
+        .select('m.id', 'id')
+        .addSelect('m.name', 'name')
+        .orderBy('m.id', 'DESC')
+        .getRawMany();
+      // .addSelect('moviePosters');
+    } else {
+      const [movies, count] = await builder
+        .leftJoinAndSelect(
+          'm.moviePosters',
+          'moviePosters',
+          'moviePosters.isThumb = true',
+        )
+        .leftJoinAndSelect('m.movieCategories', 'movieCategories')
+        .leftJoin('m.filterMovieCategories', 'filterMovieCategories')
+        .leftJoinAndSelect('movieCategories.category', 'category')
+        .where(
+          `
+        m.deletedAt is null
         ${name ? ' and LOWER(m.name) like :name' : ''}
         ${nation ? ' and LOWER(m.nation) like :nation' : ''}
         ${
@@ -128,22 +149,22 @@ export class MoviesService {
         }
         ${filter ?? ''}
         `,
-        {
-          ...(name ? { name: `%${name.toLowerCase()}%` } : {}),
-          ...(nation ? { nation: `%${nation.toLowerCase()}%` } : {}),
-          ...(categoryId ? { categoryId } : {}),
-        },
-      )
-      .orderBy(order?.content ?? 'm.id', order?.arrange ?? 'DESC')
-      .take(take)
-      .skip(getSkip({ page, take }))
-      .getManyAndCount();
-
-    return new PaginationDto(movies, <PageMetaDto>{
-      page,
-      take,
-      totalCount: count,
-    });
+          {
+            ...(name ? { name: `%${name.toLowerCase()}%` } : {}),
+            ...(nation ? { nation: `%${nation.toLowerCase()}%` } : {}),
+            ...(categoryId ? { categoryId } : {}),
+          },
+        )
+        .orderBy(order?.content ?? 'm.id', order?.arrange ?? 'DESC')
+        .take(take)
+        .skip(getSkip({ page, take }))
+        .getManyAndCount();
+      return new PaginationDto(movies, <PageMetaDto>{
+        page,
+        take,
+        totalCount: count,
+      });
+    }
   }
 
   async findOne(id: string) {

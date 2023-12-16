@@ -19,6 +19,9 @@ export class MovieFilter extends OmitType(PageOptionsDto, ['order'] as const) {
     default: FilterMoviesEnum.NOW_PLAYING,
   })
   filterMovies: FilterMoviesEnum | null;
+
+  @ApiProperty({ required: false, default: false })
+  isNoPagination: boolean | null;
 }
 
 export class CreateMoviePoster {
