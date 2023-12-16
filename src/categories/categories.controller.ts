@@ -41,6 +41,11 @@ export class CategoriesController {
     return await this.categoriesService.findAll(input);
   }
 
+  @Get('no-pagination')
+  async findAllNoPagination() {
+    return await this.categoriesService.findAllNoPagination();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.categoriesService.findOne(id);

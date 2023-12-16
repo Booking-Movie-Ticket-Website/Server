@@ -44,7 +44,7 @@ export class CategoriesService {
           ...(name ? { name: `%${name.toLowerCase()}%` } : {}),
         },
       )
-      .orderBy('c.id', 'DESC')
+      .orderBy('c.name', 'ASC')
       .take(take)
       .skip(getSkip({ page, take }))
       .getManyAndCount();
@@ -54,6 +54,16 @@ export class CategoriesService {
       take,
       totalCount: count,
     });
+  }
+
+  async findAllNoPagination() {
+    return await this.categoriesRepository
+      .createQueryBuilder('c')
+      .where(`c.deletedAt is null`)
+      .select('c.id', 'id')
+      .addSelect('c.name', 'name')
+      .orderBy('c.name', 'ASC')
+      .getRawMany();
   }
 
   async findOne(id: string) {

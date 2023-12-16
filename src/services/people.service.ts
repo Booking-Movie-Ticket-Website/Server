@@ -69,6 +69,17 @@ export class PeopleService {
     });
   }
 
+  async findAllNoPagination() {
+    return await this.peopleRepository
+      .createQueryBuilder('p')
+      .where(`p.deletedAt is null`)
+      .select('p.id', 'id')
+      .addSelect('p.fullName', 'fullName')
+      .addSelect('p.profilePicture', 'profilePicture')
+      .orderBy('p.fullName', 'ASC')
+      .getRawMany();
+  }
+
   async findOne(id: string) {
     const person = await this.peopleRepository.findOne({
       where: {

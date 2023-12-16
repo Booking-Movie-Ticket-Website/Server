@@ -41,6 +41,11 @@ export class PeopleController {
     return await this.peopleService.findAll(input);
   }
 
+  @Get('no-pagination')
+  async findAllNoPagination() {
+    return await this.peopleService.findAllNoPagination();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.peopleService.findOne(id);
