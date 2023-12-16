@@ -21,6 +21,14 @@ export class MovieFilter extends OmitType(PageOptionsDto, ['order'] as const) {
   filterMovies: FilterMoviesEnum | null;
 }
 
+export class CreateMoviePoster {
+  @ApiProperty({ required: false })
+  base64: string | null;
+
+  @ApiProperty({ required: false, default: false })
+  isThumb: boolean | null;
+}
+
 export class CreateMovieDto {
   @ApiProperty({ required: false })
   name: string | null;
@@ -53,10 +61,16 @@ export class CreateMovieDto {
   isActive: boolean | null;
 
   @ApiProperty({ required: false })
+  director: string | null;
+
+  @ApiProperty({ required: false })
   movieCategoryIds: string[] | null;
 
   @ApiProperty({ required: false })
   movieParticipantIds: string[] | null;
+
+  @ApiProperty({ required: false, type: [CreateMoviePoster] })
+  moviePosters: CreateMoviePoster[] | null;
 }
 
 export class UpdateMovieDto extends PartialType(CreateMovieDto) {

@@ -6,12 +6,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { addProfile } from '@automapper/core';
 import { mapper } from './config/mapper';
 import { authProfile } from './auth/auth.profile';
+import { json, urlencoded } from 'express';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.enableCors(configureCors(app));
 
   configAutoMapper();

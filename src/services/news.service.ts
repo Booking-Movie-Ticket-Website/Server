@@ -14,6 +14,7 @@ import {
   UpdateNewsDto,
 } from 'src/news/dto/news.dto';
 import { NewsPictures } from 'src/entities/NewsPictures';
+import { CloudinaryService } from 'src/utils/cloudinary';
 
 @Injectable()
 export class NewsService {
@@ -22,9 +23,10 @@ export class NewsService {
     private newsRepository: Repository<News>,
     @InjectRepository(NewsPictures)
     private newsPicturesRepository: Repository<NewsPictures>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
   async create(dto: CreateNewsDto, createdBy: string) {
-    const { title, shortDesc, fullDesc, newsPictures } = dto;
+    const { title, shortDesc, fullDesc, base64NewsPictures } = dto;
     if (!title || !shortDesc || !fullDesc)
       throw new HttpException('invalid input', HttpStatus.BAD_REQUEST);
 
@@ -40,9 +42,9 @@ export class NewsService {
 
     const { id: newsId } = newNews;
 
-    if (newsPictures?.length > 0) {
+    if (base64NewsPictures?.length > 0) {
       const preparedNewsPictures = await this.prepareNewsPictures(
-        newsPictures,
+        base64NewsPictures,
         newsId,
       );
       await this.newsPicturesRepository.insert(preparedNewsPictures);
@@ -82,8 +84,13 @@ export class NewsService {
   }
 
   async update(id: string, dto: UpdateNewsDto, updatedBy: string) {
-    const { newsPictures, deleteNewsPictureIds, title, shortDesc, fullDesc } =
-      dto;
+    const {
+      base64NewsPictures,
+      deleteNewsPictureIds,
+      title,
+      shortDesc,
+      fullDesc,
+    } = dto;
 
     const existedNews = await this.newsRepository.findOne({
       where: {
@@ -94,15 +101,12 @@ export class NewsService {
     if (!existedNews)
       throw new HttpException('news not found', HttpStatus.BAD_REQUEST);
 
-    if (newsPictures?.length > 0) {
-      for (let i = 0; i < newsPictures?.length; i++) {
-        await this.newsPicturesRepository.save(
-          this.newsPicturesRepository.create({
-            link: newsPictures[i],
-            newsId: id,
-          }),
-        );
-      }
+    if (base64NewsPictures?.length > 0) {
+      const preparedNewsPictures = await this.prepareNewsPictures(
+        base64NewsPictures,
+        id,
+      );
+      await this.newsPicturesRepository.insert(preparedNewsPictures);
     }
 
     if (deleteNewsPictureIds?.length > 0) {
@@ -140,12 +144,22 @@ export class NewsService {
     });
   }
 
-  private async prepareNewsPictures(newsPictures: string[], newsId: string) {
-    return newsPictures?.map((newsPicture) => {
-      return {
+  private async prepareNewsPictures(
+    base64NewsPictures: string[],
+    newsId: string,
+  ) {
+    const prepareNewsPictures = [];
+    for (let i = 0; i < base64NewsPictures?.length; i++) {
+      const base64 = base64NewsPictures[i];
+      const createdNewsPicture = await this.cloudinaryService.uploadNewsPicture(
+        base64,
+      );
+
+      prepareNewsPictures.push({
         newsId,
-        link: newsPicture,
-      };
-    });
+        link: createdNewsPicture?.url,
+      });
+    }
+    return prepareNewsPictures;
   }
 }

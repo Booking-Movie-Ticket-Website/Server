@@ -14,7 +14,7 @@ export class CreateNewsDto {
   fullDesc: string | null;
 
   @ApiProperty({ required: false })
-  newsPictures: string[] | null;
+  base64NewsPictures: string[] | null;
 }
 
 export class UpdateNewsDto extends PartialType(CreateNewsDto) {

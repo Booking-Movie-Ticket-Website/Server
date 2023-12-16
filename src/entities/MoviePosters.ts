@@ -21,6 +21,9 @@ export class MoviePosters {
   @JoinColumn([{ name: 'movie_id', referencedColumnName: 'id' }])
   movie: Movies;
 
+  @Column('bigint', { name: 'movie_id', nullable: true })
+  movieId: string | null;
+
   @Column('boolean', { name: 'is_thumb', nullable: true, default: false })
   isThumb: boolean | null;
 }

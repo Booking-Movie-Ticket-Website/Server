@@ -1,12 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import {
-  CreateRoleDto,
-  RoleFilter,
-  UpdateRoleDto,
-} from '../roles/dto/roles.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { Roles } from 'src/entities/Roles';
 import * as moment from 'moment';
 import {
   PageMetaDto,
@@ -16,6 +10,7 @@ import {
 import { Movies } from 'src/entities/Movies';
 import {
   CreateMovieDto,
+  CreateMoviePoster,
   MovieFilter,
   UpdateMovieDto,
 } from 'src/movies/dto/movies.dto';
@@ -23,6 +18,8 @@ import { MovieCategories } from 'src/entities/MovieCategories';
 import { MovieParticipants } from 'src/entities/MovieParticipants';
 import { People } from 'src/entities/People';
 import { FilterMoviesEnum } from 'src/shared/movies.enum';
+import { MoviePosters } from 'src/entities/MoviePosters';
+import { CloudinaryService } from 'src/utils/cloudinary';
 
 @Injectable()
 export class MoviesService {
@@ -35,6 +32,9 @@ export class MoviesService {
     private movieCategoriesRepository: Repository<MovieCategories>,
     @InjectRepository(MovieParticipants)
     private movieParticipantsRepository: Repository<MovieParticipants>,
+    @InjectRepository(MoviePosters)
+    private moviePostersRepository: Repository<MoviePosters>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
   async create(dto: CreateMovieDto, createdBy: string) {
     const {
@@ -45,8 +45,10 @@ export class MoviesService {
       releaseDate,
       nation,
       isActive,
+      director,
       movieCategoryIds,
       movieParticipantIds,
+      moviePosters,
     } = dto;
     if (!name)
       throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
@@ -75,6 +77,10 @@ export class MoviesService {
         movieId,
       );
       await this.movieParticipantsRepository.insert(movieParticipants);
+    }
+
+    if (moviePosters?.length > 0) {
+      await this.prepareMoviePosters(moviePosters, movieId);
     }
 
     return newMovie;
@@ -279,5 +285,27 @@ export class MoviesService {
     }
 
     return listMovieParticipant;
+  }
+
+  private async prepareMoviePosters(
+    moviePosters: CreateMoviePoster[],
+    movieId: string,
+  ) {
+    for (let i = 0; i < moviePosters?.length; i++) {
+      const moviePoster = moviePosters[i];
+      const { base64, isThumb } = moviePoster;
+
+      const createdPoster = await this.cloudinaryService.uploadMoviePoster(
+        base64,
+      );
+
+      await this.moviePostersRepository.save(
+        this.moviePostersRepository.create({
+          movieId,
+          link: createdPoster?.url,
+          isThumb,
+        }),
+      );
+    }
   }
 }

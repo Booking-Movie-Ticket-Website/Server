@@ -19,17 +19,25 @@ import {
   PeopleFilter,
   UpdatePersonDto,
 } from 'src/people/dto/people.dto';
+import { CloudinaryService } from 'src/utils/cloudinary';
 
 @Injectable()
 export class PeopleService {
   constructor(
     @InjectRepository(People)
     private peopleRepository: Repository<People>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
   async create(dto: CreatePersonDto, createdBy: string) {
+    const { base64ProfilePicture } = dto;
+    const createdPersonAvatar = await this.cloudinaryService.uploadActorAvatar(
+      base64ProfilePicture,
+    );
+
     return await this.peopleRepository.save(
       this.peopleRepository.create({
         ...dto,
+        profilePicture: createdPersonAvatar?.url,
         createdAt: moment().format(),
         createdBy,
       }),

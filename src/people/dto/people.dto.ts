@@ -17,7 +17,7 @@ export class CreatePersonDto {
   gender: string | null;
 
   @ApiProperty({ required: false })
-  profilePicture: string | null;
+  base64ProfilePicture: string | null;
 
   @ApiProperty({ required: false })
   dateOfBirth: string | null;
