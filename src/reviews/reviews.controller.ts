@@ -21,8 +21,6 @@ import {
 
 @ApiTags('reviews')
 @Controller('reviews')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 

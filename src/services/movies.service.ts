@@ -126,8 +126,14 @@ export class MoviesService {
 
     if (isNoPagination?.toString() === 'true') {
       return await builder
+        .leftJoinAndSelect(
+          'm.moviePosters',
+          'moviePosters',
+          'moviePosters.isThumb = true',
+        )
         .select('m.id', 'id')
         .addSelect('m.name', 'name')
+        .addSelect('moviePosters.link', 'linkPoster')
         .orderBy('m.id', 'DESC')
         .getRawMany();
       // .addSelect('moviePosters');
