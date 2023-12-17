@@ -166,7 +166,7 @@ export class BookingsService {
       .getMany();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId: string, roleId: string) {
     const existedBooking = await this.bookingsRepository.findOne({
       where: {
         id,
@@ -178,13 +178,16 @@ export class BookingsService {
     if (!existedBooking)
       throw new HttpException('booking not found', HttpStatus.BAD_REQUEST);
 
+    if (userId !== existedBooking?.userId && roleId !== '1')
+      throw new HttpException('unauthorized', HttpStatus.UNAUTHORIZED);
+
     return existedBooking;
   }
 
   async update(id: string, dto: UpdateBookingDto, updatedBy: string) {
     const { status } = dto;
 
-    const existedBooking = await this.findOne(id);
+    const existedBooking = await this.findOne(id, null, updatedBy);
     const { status: currentStatus } = existedBooking;
 
     await this.validateStatus(currentStatus, status);

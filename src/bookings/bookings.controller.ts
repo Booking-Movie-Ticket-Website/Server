@@ -52,8 +52,10 @@ export class BookingsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.bookingsService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req) {
+    const { id: userId, roleId } = req.user;
+
+    return await this.bookingsService.findOne(id, userId, roleId);
   }
 
   @Patch(':id')
