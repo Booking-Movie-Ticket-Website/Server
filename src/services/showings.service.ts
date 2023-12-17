@@ -128,7 +128,8 @@ export class ShowingsService {
         deletedAt: IsNull(),
       },
       order: {
-        id: 'ASC',
+        seatRow: 'ASC',
+        seatColumn: 'ASC',
       },
     });
 
