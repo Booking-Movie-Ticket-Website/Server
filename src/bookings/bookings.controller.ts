@@ -45,6 +45,12 @@ export class BookingsController {
     return await this.bookingsService.findAll(input);
   }
 
+  @Get('my-bookings')
+  async findAllMyBookings(@Req() req) {
+    const { id: userId } = req.user;
+    return await this.bookingsService.findAllMyBookings(userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return await this.bookingsService.findOne(id);

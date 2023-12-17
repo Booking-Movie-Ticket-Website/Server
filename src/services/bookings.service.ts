@@ -148,6 +148,24 @@ export class BookingsService {
     });
   }
 
+  async findAllMyBookings(userId: string) {
+    return await this.bookingsRepository
+      .createQueryBuilder('b')
+      .leftJoinAndSelect('b.user', 'user', 'user.deletedAt is null')
+      .leftJoinAndSelect('b.showing', 'showing', 'showing.deletedAt is null')
+      .where(
+        `
+        b.deletedAt is null
+        ${userId ? ' and b.userId = :userId' : ''}
+      `,
+        {
+          ...(userId ? { userId } : {}),
+        },
+      )
+      .orderBy('b.id', 'DESC')
+      .getMany();
+  }
+
   async findOne(id: string) {
     const existedBooking = await this.bookingsRepository.findOne({
       where: {

@@ -116,6 +116,9 @@ export class ShowingsService {
         roomId: existedShowing?.roomId,
         deletedAt: IsNull(),
       },
+      order: {
+        id: 'ASC',
+      },
     });
 
     const showingSeats = await this.showingSeatsRepository.find({
