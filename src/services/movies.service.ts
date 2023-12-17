@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import * as moment from 'moment';
 import {
   PageMetaDto,
@@ -80,7 +80,11 @@ export class MoviesService {
     }
 
     if (moviePosters?.length > 0) {
-      await this.prepareMoviePosters(moviePosters, movieId);
+      const listMoviePoster = await this.prepareMoviePosters(
+        moviePosters,
+        movieId,
+      );
+      await this.moviePostersRepository.insert(listMoviePoster);
     }
 
     return newMovie;
@@ -193,11 +197,20 @@ export class MoviesService {
 
   async update(id: string, dto: UpdateMovieDto, updatedBy: string) {
     const {
+      name,
+      duration,
+      description,
+      trailerLink,
       releaseDate,
+      nation,
+      isActive,
+      director,
       movieCategoryIds,
       movieParticipantIds,
+      moviePosters,
       deleteMovieCategoryIds,
       deleteMovieParticipantIds,
+      deleteMoviePosterIds,
     } = dto;
     const existedMovie = await this.moviesRepository.findOne({
       where: {
@@ -209,7 +222,13 @@ export class MoviesService {
       throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
     const updatedMovie = await this.moviesRepository.save({
       ...existedMovie,
-      ...dto,
+      name,
+      duration,
+      description,
+      trailerLink,
+      nation,
+      isActive,
+      director,
       releaseDate: releaseDate
         ? moment(releaseDate).format('YYYY-MM-DD')
         : existedMovie.releaseDate,
@@ -233,22 +252,30 @@ export class MoviesService {
       await this.movieParticipantsRepository.insert(movieParticipants);
     }
 
+    if (moviePosters?.length > 0) {
+      const listMoviePoster = await this.prepareMoviePosters(moviePosters, id);
+      await this.moviePostersRepository.insert(listMoviePoster);
+    }
+
     if (deleteMovieCategoryIds?.length > 0) {
-      for (let i = 0; i < deleteMovieCategoryIds?.length; i++) {
-        await this.movieCategoriesRepository.delete({
-          movieId: id,
-          categoryId: deleteMovieCategoryIds[i],
-        });
-      }
+      await this.movieCategoriesRepository.delete({
+        movieId: id,
+        categoryId: In(deleteMovieCategoryIds),
+      });
     }
 
     if (deleteMovieParticipantIds?.length > 0) {
-      for (let i = 0; i < deleteMovieParticipantIds?.length; i++) {
-        await this.movieParticipantsRepository.delete({
-          movieId: id,
-          peopleId: deleteMovieParticipantIds[i],
-        });
-      }
+      await this.movieParticipantsRepository.delete({
+        movieId: id,
+        peopleId: In(deleteMovieParticipantIds),
+      });
+    }
+
+    if (deleteMoviePosterIds?.length > 0) {
+      await this.moviePostersRepository.delete({
+        id: In(deleteMoviePosterIds),
+        movieId: id,
+      });
     }
 
     return updatedMovie;
@@ -312,6 +339,7 @@ export class MoviesService {
     moviePosters: CreateMoviePoster[],
     movieId: string,
   ) {
+    const prepareMoviePoster = [];
     for (let i = 0; i < moviePosters?.length; i++) {
       const moviePoster = moviePosters[i];
       const { base64, isThumb } = moviePoster;
@@ -320,13 +348,13 @@ export class MoviesService {
         base64,
       );
 
-      await this.moviePostersRepository.save(
-        this.moviePostersRepository.create({
-          movieId,
-          link: createdPoster?.url,
-          isThumb,
-        }),
-      );
+      prepareMoviePoster.push({
+        movieId,
+        link: createdPoster?.url,
+        isThumb,
+      });
     }
+
+    return prepareMoviePoster;
   }
 }
