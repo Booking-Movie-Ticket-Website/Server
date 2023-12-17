@@ -64,7 +64,7 @@ export class ShowingsService {
   }
 
   async findAllShowingOfAMovie(input: ShowingFilter) {
-    const { page, take, isAvailable, movieId, theaterId } = input;
+    const { page, take, isAvailable, movieId, theaterId, showingDate } = input;
     const [showings, count] = await this.showingsRepository
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.room', 'room')
@@ -78,6 +78,11 @@ export class ShowingsService {
         }
         ${movieId ? ' and s.movieId = :movieId' : ''}
         ${theaterId ? ' and room.theaterId = :theaterId' : ''}
+        ${
+          showingDate
+            ? ' and s.startTime between :startShowingDate and  :endShowingDate'
+            : ''
+        }
       `,
         {
           ...(isAvailable.toString() === 'true'
@@ -85,6 +90,12 @@ export class ShowingsService {
             : {}),
           ...(movieId ? { movieId } : {}),
           ...(theaterId ? { theaterId } : {}),
+          ...(showingDate
+            ? { startShowingDate: new Date(`${showingDate}T00:00:00Z`) }
+            : {}),
+          ...(showingDate
+            ? { endShowingDate: new Date(`${showingDate}T23:59:59Z`) }
+            : {}),
         },
       )
       .orderBy('s.id', 'DESC')

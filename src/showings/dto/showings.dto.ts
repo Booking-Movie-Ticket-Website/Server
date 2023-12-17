@@ -13,6 +13,9 @@ export class ShowingFilter extends OmitType(PageOptionsDto, [
 
   @ApiProperty({ required: false, default: true })
   isAvailable: boolean | null;
+
+  @ApiProperty({ required: false, format: 'YYYY-MM-DD' })
+  showingDate: Date | null;
 }
 
 export class CreateShowingDto {
