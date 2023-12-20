@@ -145,9 +145,13 @@ export class ShowingsService {
     );
 
     const checkShowingSeatsBooked = seats.map((seat) => {
-      const { id } = seat;
+      const { id, type } = seat;
       return {
         ...seat,
+        price:
+          type?.toString() === SeatsEnum.STANDARD
+            ? this.configService.get<number>('STANDARD_SEAT_PRICE')
+            : this.configService.get<number>('SINGLE_COUPLE_SEAT_PRICE'),
         isBooked: bookedSeatIds?.includes(id) ? true : false,
       };
     });
