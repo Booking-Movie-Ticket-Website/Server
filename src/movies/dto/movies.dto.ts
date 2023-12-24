@@ -78,10 +78,19 @@ export class CreateMovieDto {
 
 export class UpdateMovieDto extends PartialType(CreateMovieDto) {
   @ApiProperty({ required: false })
+  addMovieCategoryIds: string[] | null;
+
+  @ApiProperty({ required: false })
   deleteMovieCategoryIds: string[] | null;
 
   @ApiProperty({ required: false })
+  addMovieParticipantIds: string[] | null;
+
+  @ApiProperty({ required: false })
   deleteMovieParticipantIds: string[] | null;
+
+  @ApiProperty({ required: false, type: [CreateMoviePoster] })
+  addMoviePosters: CreateMoviePoster[] | null;
 
   @ApiProperty({ required: false })
   deleteMoviePosterIds: string[] | null;

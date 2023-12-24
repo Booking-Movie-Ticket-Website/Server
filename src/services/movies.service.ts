@@ -211,11 +211,11 @@ export class MoviesService {
       nation,
       isActive,
       director,
-      movieCategoryIds,
-      movieParticipantIds,
-      moviePosters,
+      addMovieCategoryIds,
       deleteMovieCategoryIds,
+      addMovieParticipantIds,
       deleteMovieParticipantIds,
+      addMoviePosters,
       deleteMoviePosterIds,
     } = dto;
     const existedMovie = await this.moviesRepository.findOne({
@@ -242,24 +242,27 @@ export class MoviesService {
       updatedBy,
     });
 
-    if (movieCategoryIds?.length > 0) {
+    if (addMovieCategoryIds?.length > 0) {
       const movieCategories = await this.prepareMovieCategories(
-        movieCategoryIds,
+        addMovieCategoryIds,
         id,
       );
       await this.movieCategoriesRepository.insert(movieCategories);
     }
 
-    if (movieParticipantIds?.length > 0) {
+    if (addMovieParticipantIds?.length > 0) {
       const movieParticipants = await this.prepareMovieParticipants(
-        movieParticipantIds,
+        addMovieParticipantIds,
         id,
       );
       await this.movieParticipantsRepository.insert(movieParticipants);
     }
 
-    if (moviePosters?.length > 0) {
-      const listMoviePoster = await this.prepareMoviePosters(moviePosters, id);
+    if (addMoviePosters?.length > 0) {
+      const listMoviePoster = await this.prepareMoviePosters(
+        addMoviePosters,
+        id,
+      );
       await this.moviePostersRepository.insert(listMoviePoster);
     }
 
@@ -278,6 +281,26 @@ export class MoviesService {
     }
 
     if (deleteMoviePosterIds?.length > 0) {
+      const existedMoviePosters = await this.moviePostersRepository.find({
+        where: {
+          id: In(deleteMoviePosterIds),
+        },
+      });
+      const listDeletedMoviePoster = existedMoviePosters?.map(
+        (existedMoviePoster) => {
+          const url = existedMoviePoster?.link;
+          const secondToLastSlashIndex = url?.lastIndexOf(
+            '/',
+            url.lastIndexOf('/') - 1,
+          );
+          return url
+            ?.slice(secondToLastSlashIndex + 1)
+            ?.replace(/\.[^/.]+$/, '');
+        },
+      );
+
+      await this.cloudinaryService.deleteMoviePoster(listDeletedMoviePoster);
+
       await this.moviePostersRepository.delete({
         id: In(deleteMoviePosterIds),
         movieId: id,
