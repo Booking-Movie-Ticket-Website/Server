@@ -95,8 +95,6 @@ export class PeopleService {
   }
 
   async update(id: string, dto: UpdatePersonDto, updatedBy: string) {
-    // const { name, isAccessCms, isActive } = dto;
-
     const existedPerson = await this.peopleRepository.findOne({
       where: {
         id,

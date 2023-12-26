@@ -8,9 +8,6 @@ export class PeopleFilter extends OmitType(PageOptionsDto, ['order'] as const) {
 
 export class CreatePersonDto {
   @ApiProperty({ required: false })
-  profession: string | null;
-
-  @ApiProperty({ required: false })
   fullName: string | null;
 
   @ApiProperty({ required: false })

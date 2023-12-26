@@ -29,7 +29,4 @@ export class MovieParticipants {
 
   @Column('bigint', { name: 'people_id', nullable: true })
   peopleId: string | null;
-
-  @Column('bigint', { name: 'profession', nullable: true })
-  profession: string | null;
 }

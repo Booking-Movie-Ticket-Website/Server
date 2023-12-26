@@ -14,13 +14,6 @@ export class People {
   id: string;
 
   @Column('character varying', {
-    name: 'profession',
-    nullable: true,
-    length: 255,
-  })
-  profession: string | null;
-
-  @Column('character varying', {
     name: 'full_name',
     nullable: true,
     length: 255,

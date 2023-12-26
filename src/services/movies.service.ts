@@ -182,11 +182,7 @@ export class MoviesService {
       .createQueryBuilder('m')
       .leftJoinAndSelect('m.moviePosters', 'moviePosters')
       .leftJoinAndSelect('m.movieCategories', 'movieCategories')
-      .leftJoinAndSelect(
-        'm.movieParticipants',
-        'movieParticipants',
-        `movieParticipants.profession = 'actor'`,
-      )
+      .leftJoinAndSelect('m.movieParticipants', 'movieParticipants')
       .leftJoinAndSelect('m.reviews', 'reviews')
       .leftJoinAndSelect('movieCategories.category', 'category')
       .leftJoinAndSelect('movieParticipants.people', 'people')
@@ -357,7 +353,6 @@ export class MoviesService {
       listMovieParticipant.push({
         movieId,
         peopleId: movieParticipantIds[i],
-        profession: existedPerson.profession,
       });
     }
 
