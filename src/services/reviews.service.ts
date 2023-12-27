@@ -46,7 +46,11 @@ export class ReviewsService {
       }),
     );
 
-    await this.reCalculateAverageStars(existedMovie, newReview, createdBy);
+    await this.reCalculateAverageStarsAfterAdding(
+      existedMovie,
+      newReview,
+      createdBy,
+    );
 
     return newReview;
   }
@@ -131,27 +135,27 @@ export class ReviewsService {
     if (!existedMovie)
       throw new HttpException('movie not found', HttpStatus.BAD_REQUEST);
 
-    await this.reCalculateAverageStars(existedMovie, existedReview, deletedBy);
+    await this.reCalculateAverageStarsAfterDeleting(
+      existedMovie,
+      existedReview,
+      deletedBy,
+    );
 
     return deletedReview;
   }
 
-  async reCalculateAverageStars(
+  async reCalculateAverageStarsAfterAdding(
     movie: Movies,
     review: Reviews,
     updatedBy: string,
   ) {
     const { totalReviews, avrStars } = movie;
-    const { star, deletedAt } = review;
+    const { star } = review;
 
-    const starAmount = deletedAt ? -star : +star;
-    const updateTotalAmount = deletedAt ? -1 : +1;
+    const newTotalReviews = parseInt(totalReviews.toString()) + 1;
+    const totalStars = totalReviews * avrStars + star;
 
-    const totalStars = +totalReviews * +avrStars;
-    const newTotalStars = totalStars + starAmount;
-
-    const newTotalReviews = totalReviews + updateTotalAmount;
-    const newAvrStars = newTotalStars / newTotalReviews;
+    const newAvrStars = totalStars / newTotalReviews;
 
     await this.moviesRepository.save({
       ...movie,
@@ -159,6 +163,28 @@ export class ReviewsService {
       avrStars: newAvrStars,
       updatedAt: moment().format(),
       updatedBy,
+    });
+  }
+
+  async reCalculateAverageStarsAfterDeleting(
+    movie: Movies,
+    review: Reviews,
+    deletedBy: string,
+  ) {
+    const { totalReviews, avrStars } = movie;
+    const { star } = review;
+
+    const newTotalReviews = parseInt(totalReviews.toString()) - 1;
+    const totalStars = totalReviews * avrStars - star;
+
+    const newAvrStars = totalStars / newTotalReviews;
+
+    await this.moviesRepository.save({
+      ...movie,
+      totalReviews: newTotalReviews,
+      avrStars: newAvrStars,
+      updatedAt: moment().format(),
+      updatedBy: deletedBy,
     });
   }
 }
