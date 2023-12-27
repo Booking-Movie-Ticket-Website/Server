@@ -213,6 +213,7 @@ export class MoviesService {
       deleteMovieParticipantIds,
       addMoviePosters,
       deleteMoviePosterIds,
+      thumbnailMoviePosterId,
     } = dto;
     const existedMovie = await this.moviesRepository.findOne({
       where: {
@@ -303,6 +304,28 @@ export class MoviesService {
       });
     }
 
+    if (thumbnailMoviePosterId) {
+      const existedMoviePoster = await this.moviePostersRepository.findOne({
+        where: {
+          id: thumbnailMoviePosterId,
+        },
+      });
+      if (existedMoviePoster) {
+        await this.moviePostersRepository.update(
+          {
+            movieId: id,
+          },
+          {
+            isThumb: false,
+          },
+        );
+        await this.moviePostersRepository.save({
+          ...existedMoviePoster,
+          isThumb: true,
+        });
+      }
+    }
+
     return updatedMovie;
   }
 
@@ -371,6 +394,17 @@ export class MoviesService {
       const createdPoster = await this.cloudinaryService.uploadMoviePoster(
         base64,
       );
+
+      if (isThumb?.toString() === 'true') {
+        await this.moviePostersRepository.update(
+          {
+            movieId,
+          },
+          {
+            isThumb: false,
+          },
+        );
+      }
 
       prepareMoviePoster.push({
         movieId,
