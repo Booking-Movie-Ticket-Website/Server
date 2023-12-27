@@ -35,7 +35,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const exitedUser = await this.usersRepository.findOne({
+    const existedUser = await this.usersRepository.findOne({
       where: {
         email,
         deletedAt: IsNull(),
@@ -43,13 +43,13 @@ export class AuthService {
       select: ['id', 'email', 'password'],
     });
 
-    if (!exitedUser)
+    if (!existedUser)
       throw new HttpException(
         'Email or password is not correct',
         HttpStatus.BAD_REQUEST,
       );
 
-    const { password: hashedPassword } = exitedUser;
+    const { password: hashedPassword } = existedUser;
     const compareResult = await bcrypt.compare(password, hashedPassword);
 
     if (!compareResult)
@@ -58,7 +58,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
 
-    const accessToken = await this.getAccesstoken(exitedUser);
+    const accessToken = await this.getAccesstoken(existedUser);
     return accessToken;
   }
 

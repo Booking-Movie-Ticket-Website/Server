@@ -153,6 +153,10 @@ export class BookingsService {
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.user', 'user', 'user.deletedAt is null')
       .leftJoinAndSelect('b.showing', 'showing', 'showing.deletedAt is null')
+      .leftJoinAndSelect('b.showingSeats', 'showingSeats')
+      .leftJoinAndSelect('showingSeats.seat', 'seat')
+      .leftJoinAndSelect('showing.movie', 'movie')
+      .leftJoinAndSelect('showing.room', 'room')
       .where(
         `
         b.deletedAt is null
@@ -172,7 +176,14 @@ export class BookingsService {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['user', 'showing', 'showingSeats'],
+      relations: [
+        'user',
+        'showing',
+        'showingSeats',
+        'showingSeats.seat',
+        'showing.movie',
+        'showing.room',
+      ],
     });
 
     if (!existedBooking)
