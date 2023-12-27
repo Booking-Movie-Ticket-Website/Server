@@ -31,7 +31,7 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    const existedUser = this.findOne(id);
+    const existedUser = await this.findOne(id);
     await this.usersRepository.save({
       ...existedUser,
       ...dto,

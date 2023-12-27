@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { UsersService } from 'src/services/users.service';
@@ -18,14 +26,22 @@ export class UsersController {
   }
 
   @Patch('my-info')
-  async update(@Req() req, dto: UpdateUserDto) {
+  async update(@Req() req, @Body() dto: UpdateUserDto) {
     const { id: userId } = req.user;
-    return await this.usersService.update(userId, dto);
+    const data = await this.usersService.update(userId, dto);
+    return {
+      message: 'update successfully',
+      data,
+    };
   }
 
   @Patch('change-password')
-  async changePassword(@Req() req, dto: ChangePasswordDto) {
+  async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
     const { id: userId } = req.user;
-    return await this.usersService.changePassword(userId, dto);
+    const data = await this.usersService.changePassword(userId, dto);
+    return {
+      message: 'change password successfully',
+      data,
+    };
   }
 }
