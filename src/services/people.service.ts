@@ -30,9 +30,12 @@ export class PeopleService {
   ) {}
   async create(dto: CreatePersonDto, createdBy: string) {
     const { base64ProfilePicture } = dto;
-    const createdPersonAvatar = await this.cloudinaryService.uploadActorAvatar(
-      base64ProfilePicture,
-    );
+    let createdPersonAvatar = undefined;
+    if (base64ProfilePicture) {
+      createdPersonAvatar = await this.cloudinaryService.uploadActorAvatar(
+        base64ProfilePicture,
+      );
+    }
 
     return await this.peopleRepository.save(
       this.peopleRepository.create({
@@ -95,6 +98,7 @@ export class PeopleService {
   }
 
   async update(id: string, dto: UpdatePersonDto, updatedBy: string) {
+    const { base64ProfilePicture } = dto;
     const existedPerson = await this.peopleRepository.findOne({
       where: {
         id,
@@ -104,8 +108,19 @@ export class PeopleService {
     if (!existedPerson)
       throw new HttpException('person not found', HttpStatus.BAD_REQUEST);
 
+    let createdPersonAvatar = undefined;
+    if (base64ProfilePicture) {
+      createdPersonAvatar = await this.updateActorProfile(
+        existedPerson,
+        base64ProfilePicture,
+      );
+    }
+
     return await this.peopleRepository.save({
       ...existedPerson,
+      profilePicture: base64ProfilePicture
+        ? createdPersonAvatar?.url
+        : existedPerson?.profilePicture,
       ...dto,
       updatedAt: moment().format(),
       updatedBy,
@@ -127,5 +142,27 @@ export class PeopleService {
       deletedAt: moment().format(),
       deletedBy,
     });
+  }
+
+  async updateActorProfile(person: People, base64: string) {
+    const createdPersonAvatar = await this.cloudinaryService.uploadActorAvatar(
+      base64,
+    );
+
+    const { profilePicture } = person;
+
+    const listDeletedProfilePicture = [];
+
+    const secondToLastSlashIndex = profilePicture?.lastIndexOf(
+      '/',
+      profilePicture.lastIndexOf('/') - 1,
+    );
+    const url = profilePicture
+      ?.slice(secondToLastSlashIndex + 1)
+      ?.replace(/\.[^/.]+$/, '');
+    listDeletedProfilePicture.push(url);
+    await this.cloudinaryService.deletePicture(listDeletedProfilePicture);
+
+    return createdPersonAvatar;
   }
 }

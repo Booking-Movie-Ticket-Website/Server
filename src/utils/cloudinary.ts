@@ -23,14 +23,6 @@ export class CloudinaryService {
     }
   }
 
-  async deleteMoviePoster(data: string[]) {
-    try {
-      const a = await cloudinary.api.delete_resources(data);
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-
   async uploadActorAvatar(base64: string) {
     try {
       return await cloudinary.uploader.upload(base64, {
@@ -48,6 +40,14 @@ export class CloudinaryService {
         resource_type: 'image',
         upload_preset: 'news_setups',
       });
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async deletePicture(data: string[]) {
+    try {
+      await cloudinary.api.delete_resources(data);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

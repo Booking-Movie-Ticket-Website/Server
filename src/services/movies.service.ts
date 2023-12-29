@@ -296,7 +296,7 @@ export class MoviesService {
         },
       );
 
-      await this.cloudinaryService.deleteMoviePoster(listDeletedMoviePoster);
+      await this.cloudinaryService.deletePicture(listDeletedMoviePoster);
 
       await this.moviePostersRepository.delete({
         id: In(deleteMoviePosterIds),
