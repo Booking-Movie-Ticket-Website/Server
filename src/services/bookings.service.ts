@@ -157,6 +157,7 @@ export class BookingsService {
       .leftJoinAndSelect('showingSeats.seat', 'seat')
       .leftJoinAndSelect('showing.movie', 'movie')
       .leftJoinAndSelect('showing.room', 'room')
+      .leftJoinAndSelect('room.theater', 'theater')
       .where(
         `
         b.deletedAt is null
@@ -183,6 +184,7 @@ export class BookingsService {
         'showingSeats.seat',
         'showing.movie',
         'showing.room',
+        'showing.room.theater',
       ],
     });
 
