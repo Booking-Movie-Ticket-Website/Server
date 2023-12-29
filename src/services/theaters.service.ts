@@ -97,7 +97,7 @@ export class TheatersService {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['rooms', 'showings'],
+      relations: ['rooms'],
     });
   }
 

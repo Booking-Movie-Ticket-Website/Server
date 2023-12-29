@@ -78,7 +78,7 @@ export class RoomsService {
         id,
         deletedAt: IsNull(),
       },
-      relations: ['rooms', 'showings'],
+      relations: ['theater'],
     });
   }
 
