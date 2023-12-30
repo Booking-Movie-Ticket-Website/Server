@@ -92,23 +92,23 @@ export class ReviewsService {
     });
   }
 
-  async update(id: string, dto: UpdateReviewDto, updatedBy: string) {
-    const existedReview = await this.reviewsRepository.findOne({
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-    });
-    if (!existedReview)
-      throw new HttpException('review not found', HttpStatus.BAD_REQUEST);
+  // async update(id: string, dto: UpdateReviewDto, updatedBy: string) {
+  //   const existedReview = await this.reviewsRepository.findOne({
+  //     where: {
+  //       id,
+  //       deletedAt: IsNull(),
+  //     },
+  //   });
+  //   if (!existedReview)
+  //     throw new HttpException('review not found', HttpStatus.BAD_REQUEST);
 
-    return await this.reviewsRepository.save({
-      ...existedReview,
-      ...dto,
-      updatedAt: moment().format(),
-      updatedBy,
-    });
-  }
+  //   return await this.reviewsRepository.save({
+  //     ...existedReview,
+  //     ...dto,
+  //     updatedAt: moment().format(),
+  //     updatedBy,
+  //   });
+  // }
 
   async remove(id: string, deletedBy: string) {
     const existedReview = await this.reviewsRepository.findOne({

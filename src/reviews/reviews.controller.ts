@@ -46,22 +46,22 @@ export class ReviewsController {
     return await this.reviewsService.findAllByMovie(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Patch(':id')
-  async update(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() dto: UpdateReviewDto,
-  ) {
-    const { id: updatedBy } = req.user;
-    const updatedReview = await this.reviewsService.update(id, dto, updatedBy);
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @Patch(':id')
+  // async update(
+  //   @Req() req,
+  //   @Param('id') id: string,
+  //   @Body() dto: UpdateReviewDto,
+  // ) {
+  //   const { id: updatedBy } = req.user;
+  //   const updatedReview = await this.reviewsService.update(id, dto, updatedBy);
 
-    return {
-      message: 'update successfully',
-      updatedReview,
-    };
-  }
+  //   return {
+  //     message: 'update successfully',
+  //     updatedReview,
+  //   };
+  // }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

@@ -23,16 +23,12 @@ export class CreateSeatDto {
 
   @ApiProperty({ required: false })
   numberOfColumn: number | null;
-
-  @ApiProperty({
-    required: false,
-    enum: SeatsEnum,
-    default: SeatsEnum.STANDARD,
-  })
-  seatType: SeatsEnum | null;
 }
 
-export class UpdateSeatDto extends PartialType(CreateSeatDto) {
+export class UpdateSeatDto {
   @ApiProperty({ required: false })
-  pairWith: string | null;
+  firstSeatId: string | null;
+
+  @ApiProperty({ required: false })
+  secondSeatId: string | null;
 }

@@ -111,13 +111,27 @@ export class ShowingsService {
   }
 
   async findOne(id: string) {
-    const existedShowing = await this.showingsRepository.findOne({
-      where: {
+    // const existedShowing = await this.showingsRepository.findOne({
+    //   where: {
+    //     id,
+    //     deletedAt: IsNull(),
+    //   },
+    //   relations: ['movie', 'room'],
+    // });
+
+    const existedShowing = await this.showingsRepository
+      .createQueryBuilder('s')
+      .leftJoinAndSelect('s.movie', 'movie')
+      .leftJoinAndSelect(
+        'movie.moviePosters',
+        'moviePosters',
+        'moviePosters.isThumb = true',
+      )
+      .leftJoinAndSelect('s.room', 'room')
+      .where(`s.id = :id and s.deletedAt is null`, {
         id,
-        deletedAt: IsNull(),
-      },
-      relations: ['movie', 'room'],
-    });
+      })
+      .getOne();
 
     if (!existedShowing)
       throw new HttpException('showing not found', HttpStatus.BAD_REQUEST);

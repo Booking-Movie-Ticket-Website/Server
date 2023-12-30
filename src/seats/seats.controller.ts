@@ -44,27 +44,22 @@ export class SeatsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Patch(':id')
-  async update(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() dto: UpdateSeatDto,
-  ) {
+  @Patch('update-to-type-couple')
+  async update(@Req() req, @Body() dto: UpdateSeatDto) {
     const { id: updatedBy } = req.user;
-    const updateSeat = await this.seatsService.update(id, dto, updatedBy);
+    await this.seatsService.updateToTypeCouple(dto, updatedBy);
 
     return {
       message: 'update successfully',
-      updateSeat,
     };
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Delete(':id')
-  async remove(@Req() req, @Param('id') id: string) {
+  @Delete(':roomId')
+  async remove(@Req() req, @Param('roomId') roomId: string) {
     const { id: deletedBy } = req.user;
-    const deletedSeat = await this.seatsService.remove(id, deletedBy);
+    const deletedSeat = await this.seatsService.remove(roomId, deletedBy);
     return {
       message: 'delete successfully',
       deletedSeat,
