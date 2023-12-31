@@ -89,6 +89,7 @@ export class ReviewsService {
         movieId,
         deletedAt: IsNull(),
       },
+      relations: ['createdUser'],
     });
   }
 

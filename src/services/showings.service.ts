@@ -111,14 +111,6 @@ export class ShowingsService {
   }
 
   async findOne(id: string) {
-    // const existedShowing = await this.showingsRepository.findOne({
-    //   where: {
-    //     id,
-    //     deletedAt: IsNull(),
-    //   },
-    //   relations: ['movie', 'room'],
-    // });
-
     const existedShowing = await this.showingsRepository
       .createQueryBuilder('s')
       .leftJoinAndSelect('s.movie', 'movie')
