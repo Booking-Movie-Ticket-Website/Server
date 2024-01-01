@@ -156,6 +156,11 @@ export class BookingsService {
       .leftJoinAndSelect('b.showingSeats', 'showingSeats')
       .leftJoinAndSelect('showingSeats.seat', 'seat')
       .leftJoinAndSelect('showing.movie', 'movie')
+      .leftJoinAndSelect(
+        'movie.moviePosters',
+        'moviePosters',
+        'moviePosters.isThumb = true',
+      )
       .leftJoinAndSelect('showing.room', 'room')
       .leftJoinAndSelect('room.theater', 'theater')
       .where(
@@ -172,21 +177,31 @@ export class BookingsService {
   }
 
   async findOne(id: string, userId: string, roleId: string) {
-    const existedBooking = await this.bookingsRepository.findOne({
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-      relations: [
-        'user',
-        'showing',
-        'showingSeats',
-        'showingSeats.seat',
-        'showing.movie',
-        'showing.room',
-        'showing.room.theater',
-      ],
-    });
+    const existedBooking = await this.bookingsRepository
+      .createQueryBuilder('b')
+      .leftJoinAndSelect('b.user', 'user', 'user.deletedAt is null')
+      .leftJoinAndSelect('b.showing', 'showing', 'showing.deletedAt is null')
+      .leftJoinAndSelect('b.showingSeats', 'showingSeats')
+      .leftJoinAndSelect('showingSeats.seat', 'seat')
+      .leftJoinAndSelect('showing.movie', 'movie')
+      .leftJoinAndSelect(
+        'movie.moviePosters',
+        'moviePosters',
+        'moviePosters.isThumb = true',
+      )
+      .leftJoinAndSelect('showing.room', 'room')
+      .leftJoinAndSelect('room.theater', 'theater')
+      .where(
+        `
+        b.deletedAt is null
+        ${id ? ' and b.id = :id' : ''}
+      `,
+        {
+          ...(id ? { id } : {}),
+        },
+      )
+      .orderBy('b.id', 'DESC')
+      .getOne();
 
     if (!existedBooking)
       throw new HttpException('booking not found', HttpStatus.BAD_REQUEST);
