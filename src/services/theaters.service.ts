@@ -92,13 +92,13 @@ export class TheatersService {
   }
 
   async findOne(id: string) {
-    return await this.theatersRepository.findOne({
-      where: {
+    return await this.theatersRepository
+      .createQueryBuilder('t')
+      .leftJoinAndSelect('t.rooms', 'rooms', 'rooms.deletedAt is null')
+      .where(`t.id = :id and t.deletedAt is null`, {
         id,
-        deletedAt: IsNull(),
-      },
-      relations: ['rooms'],
-    });
+      })
+      .getOne();
   }
 
   async update(id: string, dto: UpdateTheaterDto, updatedBy: string) {
