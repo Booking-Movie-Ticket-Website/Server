@@ -25,6 +25,11 @@ export class UsersController {
     return await this.usersService.findAll(input);
   }
 
+  @Get('users/:id')
+  async findOneAdmin(@Param('id') id: string) {
+    return await this.usersService.findOne(id);
+  }
+
   @Get('my-info')
   async findOne(@Req() req) {
     const { id: userId } = req.user;
