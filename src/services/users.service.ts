@@ -8,7 +8,11 @@ import {
   getSkip,
 } from 'src/shared/pagination/pagination.dto';
 import { Users } from 'src/entities/Users';
-import { ChangePasswordDto, UpdateUserDto } from 'src/users/dto/users.dto';
+import {
+  ChangePasswordDto,
+  UpdateUserDto,
+  UserFilter,
+} from 'src/users/dto/users.dto';
 const bcrypt = require('bcrypt');
 @Injectable()
 export class UsersService {
@@ -16,6 +20,25 @@ export class UsersService {
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
   ) {}
+
+  async findAll(input: UserFilter) {
+    const { page, take } = input;
+
+    const [users, count] = await this.usersRepository
+      .createQueryBuilder('u')
+      // .leftJoinAndSelect('n.newsPictures', 'newsPictures')
+      .where(`u.deletedAt is null and u.roleId = 2`)
+      .orderBy('u.id', 'DESC')
+      .take(take)
+      .skip(getSkip({ page, take }))
+      .getManyAndCount();
+
+    return new PaginationDto(users, <PageMetaDto>{
+      page,
+      take,
+      totalCount: count,
+    });
+  }
 
   async findOne(id: string) {
     const user = await this.usersRepository.findOne({

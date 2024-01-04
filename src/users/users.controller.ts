@@ -4,13 +4,14 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { UsersService } from 'src/services/users.service';
-import { ChangePasswordDto, UpdateUserDto } from './dto/users.dto';
+import { ChangePasswordDto, UpdateUserDto, UserFilter } from './dto/users.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -18,6 +19,11 @@ import { ChangePasswordDto, UpdateUserDto } from './dto/users.dto';
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('users')
+  async findAll(@Query() input: UserFilter) {
+    return await this.usersService.findAll(input);
+  }
 
   @Get('my-info')
   async findOne(@Req() req) {
