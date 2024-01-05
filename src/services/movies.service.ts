@@ -104,8 +104,11 @@ export class MoviesService {
     let filter = undefined;
     let order = undefined;
     switch (filterMovies) {
-      case FilterMoviesEnum.NOW_PLAYING:
+      case FilterMoviesEnum.BANNER:
         filter = ` and m.isActive = true`;
+        break;
+      case FilterMoviesEnum.NOW_PLAYING:
+        filter = ` and showings.startTime > :currentTime`;
         break;
       case FilterMoviesEnum.TOP_FEATURED:
         order = {
@@ -147,6 +150,14 @@ export class MoviesService {
         .leftJoinAndSelect('m.movieCategories', 'movieCategories')
         .leftJoin('m.filterMovieCategories', 'filterMovieCategories')
         .leftJoinAndSelect('movieCategories.category', 'category')
+        .leftJoin(
+          'm.showings',
+          'showings',
+          // `showings.startTime > :currentTime`,
+          // {
+          //   currentTime: new Date(),
+          // },
+        )
         .where(
           `
         m.deletedAt is null
@@ -163,6 +174,7 @@ export class MoviesService {
             ...(name ? { name: `%${name.toLowerCase()}%` } : {}),
             ...(nation ? { nation: `%${nation.toLowerCase()}%` } : {}),
             ...(categoryId ? { categoryId } : {}),
+            currentTime: new Date(),
           },
         )
         .orderBy(order?.content ?? 'm.id', order?.arrange ?? 'DESC')

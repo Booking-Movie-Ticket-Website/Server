@@ -223,7 +223,6 @@ export class ShowingsService {
     const existedMovie = await this.moviesRepository.findOne({
       where: {
         id: movieId,
-        isActive: true,
         deletedAt: IsNull(),
       },
     });
